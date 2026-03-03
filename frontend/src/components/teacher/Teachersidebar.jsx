@@ -5,13 +5,13 @@ const Teachersidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const menuItems = [
-    { name: "Dashboard", path: "/teacher", icon: "bx bx-home" },
+    // { name: "Dashboard", path: "/teacher", icon: "bx bx-home" },
     { name: "Student List", path: "/teacher/students", icon: "bx bx-group" },
     { name: "Attendance Entry", path: "/teacher/attendance", icon: "bx bx-calendar-check" },
     { name: "Marks Entry", path: "/teacher/marks", icon: "bx bx-edit" },
     { name: "Messages", path: "/teacher/messages", icon: "bx bx-message-square-dots" },
     { name: "Schedule", path: "/teacher/schedule", icon: "bx bx-time" },
-    { name: "Profile", path: "/teacher/profile", icon: "bx bx-user" },
+    { name: "Profile", path: "/teacher", icon: "bx bx-user" },
   ];
 
   return (

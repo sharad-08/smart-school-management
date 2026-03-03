@@ -70,29 +70,23 @@ const App = () => {
         <>
           <Teachernavbar />
           <Teachersidebar />
+ <div className="md:ml-64 mt-20 md:mt-16 p-6">
+      <Routes>
 
-          <div className="md:ml-64 mt-20 md:mt-16 p-6">
-         
+        {/* Default landing page: Teacher Profile */}
+        <Route path="/teacher" element={<TeacherProfile />} />
 
-            <Routes>
+        {/* Other Routes */}
+        <Route path="/teacher/students" element={<StudentList />} />
+        <Route path="/teacher/attendance" element={<AttendanceEntry />} />
+        <Route path="/teacher/marks" element={<MarksEntry />} />
+        <Route path="/teacher/messages" element={<MessageCenter />} />
+        <Route path="/teacher/schedule" element={<TeacherSchedule />} />
+        <Route path="/teacher/profile" element={<TeacherProfile />} />
 
-  {/* Redirect */}
-  <Route path="/teacher" element={<Navigate to="/teacher/dashboard" />} />
-
-  {/* Dashboard */}
-  <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
-
-  {/* Other Routes */}
-  <Route path="/teacher/students" element={<StudentList />} />
-  <Route path="/teacher/attendance" element={<AttendanceEntry />} />
-  <Route path="/teacher/marks" element={<MarksEntry />} />
-  <Route path="/teacher/messages" element={<MessageCenter />} />
-  <Route path="/teacher/schedule" element={<TeacherSchedule />} />
-  <Route path="/teacher/profile" element={<TeacherProfile />} />
-
-</Routes>
-
-          </div>
+      </Routes>
+    </div>
+          
         </>
       ) : (
         /* ================= NORMAL WEBSITE ================= */

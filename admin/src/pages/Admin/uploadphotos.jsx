@@ -1,5 +1,6 @@
  import React, { useState } from "react";
-
+import axios from "axios";
+// import { toast } from "react-toastify";
 /* ================= EVENT TYPES ================= */
 const eventTypes = [
   "Annual Function",
@@ -30,20 +31,46 @@ const EventPhotoUpload = () => {
   };
 
   /* ================= HANDLE SUBMIT ================= */
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!selectedEvent) return alert("Please select an event type!");
-    if (photos.length === 0) return alert("Please upload at least one photo!");
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   if (!selectedEvent) return alert("Please select an event type!");
+  //   if (photos.length === 0) return alert("Please upload at least one photo!");
 
-    // Normally here you would send photos to backend
-    console.log("Event Type:", selectedEvent);
-    console.log("Photos:", photos.map((p) => p.file));
+  //   // Normally here you would send photos to backend
+  //   console.log("Event Type:", selectedEvent);
+  //   console.log("Photos:", photos.map((p) => p.file));
+
+  //   alert("Photos uploaded successfully ✅");
+  //   // Clear form
+  //   setSelectedEvent("");
+  //   setPhotos([]);
+  // };
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (!selectedEvent) return alert("Please select an event type!");
+  if (photos.length === 0) return alert("Please upload at least one photo!");
+
+  try {
+    const formData = new FormData();
+    formData.append("eventType", selectedEvent);
+
+    photos.forEach((photo) => {
+      formData.append("photos", photo.file);
+    });
+
+    await axios.post("http://localhost:4000/api/events/upload", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
 
     alert("Photos uploaded successfully ✅");
-    // Clear form
     setSelectedEvent("");
     setPhotos([]);
-  };
+  } catch (error) {
+    console.log(error);
+    alert("Upload failed ❌");
+  }
+};
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">

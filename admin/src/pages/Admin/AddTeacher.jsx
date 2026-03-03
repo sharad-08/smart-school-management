@@ -1,14 +1,24 @@
  import React, { useState, useEffect } from "react";
+ import { useContext } from "react";
+import { Appcontext } from "../../context/Appcontext"; // path adjust karo
 
 const AddTeacher = () => {
+   const { addTeacher,numberofteacher,getTeachers } = useContext(Appcontext);
+  
+const generateTeacherId = async (department, subject) => {
+  const year = new Date().getFullYear();
 
-  /* ================= AUTO TEACHER ID ================= */
-  const generateTeacherId = () => {
-    const year = new Date().getFullYear();
-    const random = Math.floor(1000 + Math.random() * 9000);
-    return `TCH${year}${random}`;
-  };
+  // Count teachers of same department
+  const numberOfTeachers = await teacherModel.countDocuments({ department });
 
+  const nextNumber = numberOfTeachers + 1;
+  const paddedNumber = String(nextNumber).padStart(3, "0");
+
+  const deptCode = department.substring(0, 3).toUpperCase();
+  const subCode = subject.substring(0, 2).toUpperCase();
+
+  return `${deptCode}${subCode}${year}${paddedNumber}`;
+};
   /* ================= STATE ================= */
   const [formData, setFormData] = useState({
     teacherId: "",
@@ -34,12 +44,19 @@ const AddTeacher = () => {
     city: "",
     state: "",
     pincode: "",
+
+    password:"",
+
+
+    classTeacher:"",
+    className:"",
+    section:"",
   });
 
   useEffect(() => {
     setFormData((prev) => ({
       ...prev,
-      teacherId: generateTeacherId(),
+      // teacherId: generateTeacherId(),
     }));
   }, []);
 
@@ -69,16 +86,70 @@ const AddTeacher = () => {
   };
 
   /* ================= SUBMIT ================= */
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!validateForm()) return;
 
-    console.log("Teacher Data:", formData);
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (!validateForm()) return;
+
+  const data = new FormData();
+
+  // Format dob to YYYY-MM-DD only
+  const formattedDob = formData.dob ? new Date(formData.dob).toISOString().split("T")[0] : "";
+
+  data.append("teacherId", formData.teacherId);
+  data.append("status", formData.status);
+  data.append("fullName", formData.fullName);
+  data.append("gender", formData.gender);
+  data.append("dob", formattedDob);   // 👈 fixed here
+  data.append("contact", formData.contact);
+  data.append("email", formData.email);
+  data.append("employeeCode", formData.employeeCode);
+  data.append("department", formData.department);
+  data.append("subject", formData.subject);
+  data.append("qualification", formData.qualification);
+  data.append("experience", formData.experience);
+  data.append("address", formData.address);
+  data.append("city", formData.city);
+  data.append("state", formData.state);
+  data.append("pincode", formData.pincode);
+  data.append("password", formData.dob);
+  data.append("classTeacher",formData.classTeacher);
+  data.append("className",formData.className);
+  data.append("section",formData.section);
+
+  if (formData.photo) {
+    data.append("photo", formData.photo);
+  }
+
+  const success = await addTeacher(data);
+
+  if (success) {
     alert("Teacher Added Successfully ✅");
-
-    // Here you can send to backend:
-    // axios.post("/api/teachers/add", formData)
-  };
+    setFormData({
+      teacherId: "",
+      status: "Active",
+      fullName: "",
+      photo: null,
+      gender: "",
+      dob: "",
+      contact: "",
+      email: "",
+      employeeCode: "",
+      department: "",
+      subject: "",
+      qualification: "",
+      experience: "",
+      address: "",
+      city: "",
+      state: "",
+      pincode: "",
+      classTeacher:"",
+    className:"",
+    section:"",
+    });
+  }
+};
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
@@ -102,6 +173,10 @@ const AddTeacher = () => {
             <Input label="Contact Number" name="contact" onChange={handleChange} />
             <Input label="Email" name="email" onChange={handleChange} />
             <FileInput label="Profile Photo" name="photo" onChange={handleFileChange} />
+             <Select label="classTeacher" name="classTeacher" onChange={handleChange} options={["false","true"]} />
+            <Input label="className" name="className" onChange={handleChange}/>
+            <Input label="section" name="section" onChange={handleChange}/>
+
           </Grid>
 
           {/* ================= PROFESSIONAL INFO ================= */}

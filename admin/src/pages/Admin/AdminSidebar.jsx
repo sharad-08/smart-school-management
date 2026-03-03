@@ -13,7 +13,7 @@ const AdminSidebar = () => {
     { name: "Add Teacher", path: "/admin/add-teacher", icon: "bx bx-user-plus" },
     { name: "Teacher Schedule", path: "/admin/teacher-schedule", icon: "bx bx-time" },
     { name: "Class Timetable", path: "/admin/timetable", icon: "bx bx-calendar" },
-    { name: "Exams", path: "/admin/exams", icon: "bx bx-edit" },
+    // { name: "Exams", path: "/admin/exams", icon: "bx bx-edit" },
   
     {name : "Upload Photos",path:"/admin/uploadphotos",icon:"bx bx-image"},
   ];

@@ -1,0 +1,46 @@
+ 
+
+import mongoose from "mongoose";
+
+const studentSchema = new mongoose.Schema({
+  Name: { type: String, required: true },
+  AdmissionID: { type: String, required: true },
+  Password: { type: String, required: true },
+  Gender: { type: String, required: true },
+  DateofBirth: { type: String, required: true },
+  BloodGroup: { type: String, required: true },
+  Aadhaar: { type: String, required: true },
+  Category: { type: String, required: true },
+  Religion: { type: String, required: true },
+  Nationality: { type: String, required: true },
+  RollNumber: { type: String, required: true },
+  Class: { type: String, required: true },
+  Section: { type: String, required: true },
+  Session: { type: String, required: true },
+  AdmissionDate: { type: String, required: true },
+  PreviousSchool: { type: String },
+  PreviousClass: { type: String },
+  FatherName: { type: String, required: true },
+  FatherOccupation: { type: String, required: true },
+  FatherContact: { type: String, required: true },
+  MotherName: { type: String, required: true },
+  MotherOccupation: { type: String, required: true },
+  MotherContact: { type: String, required: true },
+  Parentemail: { type: String, required: true },
+  AnnualIncome: { type: String, required: true },
+  PermanentAddress: { type: String, required: true },
+  City: { type: String, required: true },
+  State: { type: String, required: true },
+  Pincode: { type: String, required: true },
+  EmergencyNumber: { type: String, required: true },
+  AdmissionFee: { type: Number, required: true },
+  TuitionFee: { type: Number, required: true },
+  TransportFee: { type: Number },
+  HostelFee: { type: Number },
+  FeeStatus: { type: String, required: true },
+  Scholership: { type: String },
+  Status: { type: String, required: true },
+  Profile: { type: String },
+});
+
+export default mongoose.model("Student", studentSchema);

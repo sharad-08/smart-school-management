@@ -15,8 +15,8 @@ const TeacherLayout = () => {
         <nav className="space-y-3">
 
           {[
-            { name: "Dashboard", path: "/teacher" },
-            { name: "Profile", path: "profile" },
+            // { name: "Dashboard", path: "/teacher" },
+            { name: "Profile", path: "/teacher" },
             { name: "Students", path: "students" },
             { name: "Attendance", path: "attendance" },
             { name: "Marks Entry", path: "marks" },
