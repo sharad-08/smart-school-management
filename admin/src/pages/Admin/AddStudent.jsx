@@ -169,7 +169,7 @@ const AddStudent = () => {
       data.append("State", formData.state);
       data.append("Pincode", formData.pincode);
       data.append("EmergencyNumber", formData.emergencyContact);
-
+                                     
       data.append("AdmissionFee", formData.admissionFee);
       data.append("TuitionFee", formData.tuitionFee);
       data.append("TransportFee", formData.transportFee);
@@ -177,7 +177,7 @@ const AddStudent = () => {
       data.append("FeeStatus", formData.feeStatus);
       data.append("Scholership", formData.scholarship);
       data.append("Status", formData.status);
-
+      
       // Files
       if (formData.photo) data.append("Profile", formData.photo);
       if (formData.tc) data.append("TC", formData.tc);

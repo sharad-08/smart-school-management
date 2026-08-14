@@ -53,27 +53,7 @@ const Navbar = () => {
         {/* <NavLink to="/notification" className={`relative ({isActive}) => isActive ? "text-blue-600 font-semibold" : "" `}>
           <li> <i className="bx bxs-bell text-blue-600 text-2xl"></i><p className='absolute -right-1 -top-8 text-5xl text-red-600'>.</p></li>
         </NavLink> */}
-<NavLink
-  to="/notification"
-  className={({ isActive }) =>
-    `relative ${isActive ? "text-blue-600" : "text-gray-700"}`
-  }
->
-  {({ isActive }) => (
-    <li className="relative">
-      <i
-        className={`bx bxs-bell text-2xl ${
-          isActive ? "text-blue-600" : "text-gray-700"
-        }`}
-      ></i>
 
-      {/* Red Dot */}
-      <p className="absolute -right-1 -top-3 text-red-600 text-3xl">
-        •
-      </p>
-    </li>
-  )}
-</NavLink>
 
 
 
