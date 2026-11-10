@@ -1,7 +1,6 @@
 
- import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { v2 as cloudinary } from "cloudinary";
+import { uploadImage } from "../config/cloud.js";
 import teacherModel from "../models/teacherModel.js";
 import validator from "validator";
 
@@ -85,13 +84,15 @@ const teacherId = await generateTeacherId(department, subject);
       return res.json({ success: false, message: "Teacher already exists" });
     }
 
+    if (typeof password !== "string" || password.length < 12 || Buffer.byteLength(password) > 72) {
+      return res.status(400).json({ success: false, message: "Provide a password with at least 12 characters and at most 72 bytes" });
+    }
+
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Upload photo to Cloudinary
-    const imageUpload = await cloudinary.uploader.upload(photo.path, {
-      resource_type: "image",
-    });
+    const imageUpload = await uploadImage(photo.buffer);
 
     const photoUrl = imageUpload.secure_url;
 
@@ -125,7 +126,7 @@ section,
     res.json({
       success: true,
       message: "Teacher Added Successfully",
-      teacher: newTeacher,
+      teacher: { ...newTeacher.toObject(), password: undefined },
     });
 
   } catch (error) {
@@ -161,7 +162,7 @@ export const getSingleTeacher = async (req, res) => {
 
     res.json({
       success: true,
-      teacher,
+      teacher: { ...teacher.toObject(), password: undefined },
     });
   } catch (error) {
     res.json({ success: false, message: error.message });
@@ -183,6 +184,8 @@ export const updateTeacher = async (req, res) => {
       });
     }
 
+    req.body ??= {};
+
     // Update fields only if provided
     teacher.fullName = req.body.fullName || teacher.fullName;
     teacher.email = req.body.email || teacher.email;
@@ -190,14 +193,18 @@ export const updateTeacher = async (req, res) => {
     teacher.department = req.body.department || teacher.department;
 
     // Password update only if sent
-    if (req.body && req.body.password) {
-      const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    if (Object.hasOwn(req.body, "password")) {
+      const { password } = req.body;
+      if (typeof password !== "string" || password.length < 12 || Buffer.byteLength(password) > 72) {
+        return res.status(400).json({ success: false, message: "Provide a password with at least 12 characters and at most 72 bytes" });
+      }
+      const hashedPassword = await bcrypt.hash(password, 10);
       teacher.password = hashedPassword;
     }
 
     // Profile Image Update
     if (req.file) {
-      teacher.profile = req.file.path;
+      teacher.photo = (await uploadImage(req.file.buffer)).secure_url;
     }
 
     await teacher.save();
@@ -205,7 +212,7 @@ export const updateTeacher = async (req, res) => {
     res.json({
       success: true,
       message: "Teacher Updated Successfully",
-      teacher,
+      teacher: { ...teacher.toObject(), password: undefined },
     });
 
   } catch (error) {

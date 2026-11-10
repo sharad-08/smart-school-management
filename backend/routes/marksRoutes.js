@@ -22,12 +22,12 @@ import {
   getMarksByExam,
 } from "../controllers/marksController.js";
 
-import authMiddleware from "../middlewares/authMiddleware.js";
+import teacherMiddleware from "../middlewares/teacherMiddleware.js";
 
 const router = express.Router();
 
-router.get("/students", authMiddleware, getStudentsForTeacher);
-router.post("/save", authMiddleware, saveMarks);
-router.get("/exam/:examType", authMiddleware, getMarksByExam);
+router.get("/students", teacherMiddleware, getStudentsForTeacher);
+router.post("/save", teacherMiddleware, saveMarks);
+router.get("/exam/:examType", teacherMiddleware, getMarksByExam);
 
 export default router;

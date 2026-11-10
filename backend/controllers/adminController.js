@@ -2,23 +2,30 @@
 
 
 import jwt from "jsonwebtoken";
+import { timingSafeEqual } from "node:crypto";
 import bcrypt from "bcrypt";
-import { v2 as cloudinary } from "cloudinary";
+import { uploadImage } from "../config/cloud.js";
 import studentModel from "../models/studentModel.js";
 import validator from "validator";
 
 // admin login
 export const loginAdmin = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password } = req.body ?? {};
+  const { ADMIN_EMAIL, ADMIN_PASSWORD, JWT_SECRET } = process.env;
+  if (!ADMIN_EMAIL || !ADMIN_PASSWORD || !JWT_SECRET) {
+    return res.status(503).json({ success: false, message: "Admin login is unavailable" });
+  }
+  const supplied = Buffer.from(typeof password === "string" ? password : "");
+  const expected = Buffer.from(ADMIN_PASSWORD);
 
-  if (email !== "admin@gmail.com" || password !== "admin@123") {
-    return res.json({
+  if (email !== ADMIN_EMAIL || supplied.length !== expected.length || !timingSafeEqual(supplied, expected)) {
+    return res.status(401).json({
       success: false,
       message: "Invalid Credentials",
     });
   }
 
-  const token = jwt.sign({ email }, "your_secret_key", { expiresIn: "1d" });
+  const token = jwt.sign({ email, role: "admin" }, JWT_SECRET, { expiresIn: "1d" });
 
   res.json({
     success: true,
@@ -68,13 +75,15 @@ export const addStudent = async (req, res) => {
       return res.json({ success: false, message: "Please enter a valid email" });
     }
 
+    if (typeof Password !== "string" || Password.length < 12 || Buffer.byteLength(Password) > 72) {
+      return res.status(400).json({ success: false, message: "Provide a password with at least 12 characters and at most 72 bytes" });
+    }
+
     // Hash password
     const hashedPassword = await bcrypt.hash(Password, 10);
 
     // Upload profile to Cloudinary
-    const imageUpload = await cloudinary.uploader.upload(Profile.path, {
-      resource_type: "image",
-    });
+    const imageUpload = await uploadImage(Profile.buffer);
 
     const profileurl = imageUpload.secure_url;
 
@@ -92,7 +101,7 @@ export const addStudent = async (req, res) => {
 
     await newStudent.save();
 
-    res.json({ success: true, message: "Student Added", student: newStudent  });
+    res.json({ success: true, message: "Student Added", student: { ...newStudent.toObject(), Password: undefined }  });
   } catch (error) {
     console.log(error);
     res.json({ success: false, message: error.message });
@@ -141,11 +150,22 @@ export const getSingleStudent = async (req, res) => {
 // UPDATE STUDENT
 export const updateStudent = async (req, res) => {
   try {
-    const updatedStudent = await studentModel.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    );
+    const student = await studentModel.findById(req.params.id);
+    if (!student) return res.status(404).json({ success: false, message: "Student not found" });
+
+    for (const field of Object.keys(studentModel.schema.paths)) {
+      if (["_id", "__v", "Password"].includes(field) || !Object.hasOwn(req.body, field)) continue;
+      student.set(field, req.body[field]);
+    }
+    if (Object.hasOwn(req.body, "Password")) {
+      const { Password } = req.body;
+      if (typeof Password !== "string" || Password.length < 12 || Buffer.byteLength(Password) > 72) {
+        return res.status(400).json({ success: false, message: "Provide a password with at least 12 characters and at most 72 bytes" });
+      }
+      student.Password = await bcrypt.hash(Password, 10);
+    }
+    await student.save();
+    const updatedStudent = { ...student.toObject(), Password: undefined };
 
     res.json({
       success: true,

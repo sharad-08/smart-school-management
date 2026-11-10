@@ -33,7 +33,7 @@
 
 // const MessageCenter = () => {
 //   const [message, setMessage] = useState("");
-//   const { backendUrl, token } = useContext(Appcontext);
+//   const { token } = useContext(Appcontext);
  
 //   const handleSend = async () => {
 //     if (!message.trim()) {
@@ -88,14 +88,14 @@
 
 
 import React, { useState, useContext } from "react";
-import axios from "axios";
+import axios from "../../api";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Appcontext } from "../../context/Appcontext";
 
 const MessageCenter = () => {
   const [message, setMessage] = useState("");
-  const { backendUrl, token } = useContext(Appcontext);
+  const { token } = useContext(Appcontext);
 
   const handleSend = async () => {
     if (!message.trim()) {
@@ -105,7 +105,7 @@ const MessageCenter = () => {
 
     try {
       const res = await axios.post(
-           "http://localhost:4000/api/messages/send",
+           "/api/messages/send",
         { message },
         {
           headers: { Authorization: `Bearer ${token}` },

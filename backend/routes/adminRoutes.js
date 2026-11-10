@@ -16,13 +16,13 @@ import {
 } from "../controllers/teacherController.js";
 
 import adminMiddleware from "../middlewares/adminMiddleware.js";
-import multer from "multer";
+import upload from "../middlewares/uploadMiddleware.js";
 
 const adminRouter = express.Router();
-const upload = multer({ dest: "uploads/" });
 
 // ----------- Admin Login -----------
 adminRouter.post("/login", loginAdmin);
+adminRouter.use(adminMiddleware);
 
 
 // ----------- Student Routes ----------

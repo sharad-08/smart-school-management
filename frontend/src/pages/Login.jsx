@@ -235,11 +235,11 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Appcontext } from "../context/Appcontext";
-import axios from "axios";
+import axios from "../api";
 import { toast } from "react-toastify";
 
 const Login = () => {
-  const { setRole, setToken, setStudentProfile } = useContext(Appcontext);
+  const { setRole, setToken } = useContext(Appcontext);
   const navigate = useNavigate();
 
   const [schoolId, setSchoolId] = useState("");
@@ -255,7 +255,7 @@ const Login = () => {
     }
 
     try {
-      const res = await axios.post("http://localhost:4000/api/auth/login", {
+      const res = await axios.post("/api/auth/login", {
         id: schoolId,
         password: password,
         role: loginType,
@@ -265,20 +265,7 @@ const Login = () => {
         setRole(res.data.role);
         setToken(res.data.token);
 
-        // ✅ optional: if backend sends student data directly
-        if (res.data.role === "student" && res.data.student) {
-          setStudentProfile(res.data.student);
-        }
-
-        toast.success("Login Successful 🎉");
-
-        setTimeout(() => {
-          if (res.data.role === "student") {
-            navigate("/student");
-          } else {
-            navigate("/teacher");
-          }
-        }, 1500);
+        navigate(res.data.role === "student" ? "/student" : "/teacher", { replace: true });
       }
     } catch (error) {
       toast.error(error.response?.data?.message || "Login failed ❌");

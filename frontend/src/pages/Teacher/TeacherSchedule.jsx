@@ -32,7 +32,7 @@
 
 
 import React, { useEffect, useState, useContext } from "react";
-import axios from "axios";
+import axios from "../../api";
 import { Appcontext } from "../../context/Appcontext";
 
 const TeacherScheduleTable = () => {
@@ -46,7 +46,7 @@ const TeacherScheduleTable = () => {
     const fetchSchedule = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:4000/api/teacher-timetable/${teacherProfile.teacherId}`,
+          `/api/teacher-timetable/${teacherProfile.teacherId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }

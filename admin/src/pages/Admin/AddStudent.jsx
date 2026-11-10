@@ -1,21 +1,19 @@
 
 
 
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import axios from "axios";
+import axios from "../../api";
 import { Appcontext } from "../../context/Appcontext";
 const AddStudent = () => {
-  const{numberofstudent,getstudent}=useContext(Appcontext)
-  /* ================= ROLL STATE ================= */
-  const [roll, setRoll] = useState(1);
-  const [size,setsize]=useState(0);
+  const { totalStudents, getstudent } = useContext(Appcontext);
 
+  useEffect(() => {
+    getstudent();
+  }, []);
 
-   
   /* ================= MAIN FORM STATE ================= */
   const [formData, setFormData] = useState({
-    admissionId: "",
     status: "Active",
 
     // Student Basic
@@ -37,7 +35,6 @@ const AddStudent = () => {
     admissionDate: "",
     previousSchool: "",
     previousClass: "",
-    tc: null,
 
     // Parents
     fatherName: "",
@@ -65,45 +62,13 @@ const AddStudent = () => {
     scholarship: "No",
   });
 
-  /* ================= GENERATE ADMISSION ID ================= */
-  // const generateAdmissionId = (className, section) => {
-  //   const year = new Date().getFullYear();
-  //   console.log(numberofstudent);
-  //   console.log('ji')
+  const admissionId = formData.className && formData.section
+    ? `${formData.className}${formData.section}${new Date().getFullYear()}${String(totalStudents + 1).padStart(3, "0")}`
+    : "";
 
-  //   setRoll((prev) => prev + 1);
-  //   return `${className}${section}${year}${"000"+numberofstudent}`;
-  // };
-  const generateAdmissionId = (className, section) => {
-  const year = new Date().getFullYear();
-
-  // next student number
-  const nextNumber = numberofstudent + 1;
-
-  // pad number to 3 digits (001, 002, 003...)
-  const paddedNumber = String(nextNumber).padStart(3, "0");
-
-  return `${className}${section}${year}${paddedNumber}`;
-};
-
-  /* ================= HANDLE CHANGE ================= */
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    setFormData((prev) => {
-      const updated = { ...prev, [name]: value };
-
-      if (name === "className" || name === "section") {
-        if (updated.className && updated.section) {
-          updated.admissionId = generateAdmissionId(
-            updated.className,
-            updated.section
-          );
-        }
-      }
-
-      return updated;
-    });
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   /* ================= HANDLE FILE CHANGE ================= */
@@ -128,7 +93,7 @@ const AddStudent = () => {
   /* ================= SUBMIT ================= */
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await getstudent(); // refresh total student count
+    const passwordInput = e.currentTarget.elements.initialPassword;
     if (!validateForm()) return;
 
     try {
@@ -137,8 +102,8 @@ const AddStudent = () => {
 
       // Map frontend fields to backend fields
       data.append("Name", formData.fullName);
-      data.append("AdmissionID", formData.admissionId);
-      data.append("Password", formData.dob); // temporary password
+      data.append("AdmissionID", admissionId);
+      data.append("Password", passwordInput.value);
       data.append("Gender", formData.gender);
       data.append("DateofBirth", formData.dob);
       data.append("BloodGroup", formData.bloodGroup);
@@ -180,19 +145,19 @@ const AddStudent = () => {
       
       // Files
       if (formData.photo) data.append("Profile", formData.photo);
-      if (formData.tc) data.append("TC", formData.tc);
       
       // Send to backend
       const res = await axios.post(
-        "http://localhost:4000/api/admin/add-student",
+        "/api/admin/add-student",
         data,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
 
       if (res.data.success) {
         toast.success(res.data.message);
-        setFormData((prev) => ({ ...prev, photo: null, tc: null }));
-        setRoll((prev) => prev + 1);
+        passwordInput.value = "";
+        setFormData((prev) => ({ ...prev, photo: null }));
+        await getstudent();
       } else {
         toast.error(res.data.message);
       }
@@ -208,9 +173,14 @@ const AddStudent = () => {
         <h2 className="text-3xl font-bold mb-6 text-gray-700">🎓 New Student Admission</h2>
 
         <form onSubmit={handleSubmit} className="space-y-8">
+          <label className="block">
+            Initial password
+            <input type="password" name="initialPassword" minLength={12} maxLength={72} required
+              className="block border rounded p-2" />
+          </label>
           <SectionTitle title="Student Basic Information" />
           <Grid>
-            <Input label="Admission ID" value={formData.admissionId} disabled />
+            <Input label="Admission ID" value={admissionId} disabled />
             <Input label="Full Name" name="fullName" onChange={handleChange} />
             <Select label="Gender" name="gender" onChange={handleChange} options={["Boy","Girl"]} />
             <Input type="date" label="Date of Birth" name="dob" onChange={handleChange} />
@@ -231,7 +201,6 @@ const AddStudent = () => {
             <Input type="date" label="Admission Date" name="admissionDate" onChange={handleChange} />
             <Input label="Previous School" name="previousSchool" onChange={handleChange} />
             <Input label="Previous Class" name="previousClass" onChange={handleChange} />
-            <FileInput label="Transfer Certificate (PDF)" name="tc" onChange={handleFileChange} />
           </Grid>
 
           <SectionTitle title="Parent Information" />

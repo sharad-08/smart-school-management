@@ -1,5 +1,5 @@
  import React, { useState } from "react";
-import axios from "axios";
+import axios from "../../api";
 // import { toast } from "react-toastify";
 /* ================= EVENT TYPES ================= */
 const eventTypes = [
@@ -35,6 +35,9 @@ const EventPhotoUpload = () => {
   //   e.preventDefault();
   //   if (!selectedEvent) return alert("Please select an event type!");
   //   if (photos.length === 0) return alert("Please upload at least one photo!");
+  if (photos.length > 10 || photos.reduce((size, photo) => size + photo.file.size, 0) > 4 * 1024 * 1024) {
+    return alert("Select up to 10 photos with a combined size of 4 MB or less.");
+  }
 
   //   // Normally here you would send photos to backend
   //   console.log("Event Type:", selectedEvent);
@@ -50,6 +53,9 @@ const EventPhotoUpload = () => {
 
   if (!selectedEvent) return alert("Please select an event type!");
   if (photos.length === 0) return alert("Please upload at least one photo!");
+  if (photos.length > 10 || photos.reduce((size, photo) => size + photo.file.size, 0) > 4 * 1024 * 1024) {
+    return alert("Select up to 10 photos with a combined size of 4 MB or less.");
+  }
 
   try {
     const formData = new FormData();
@@ -59,7 +65,7 @@ const EventPhotoUpload = () => {
       formData.append("photos", photo.file);
     });
 
-    await axios.post("http://localhost:4000/api/events/upload", formData, {
+    await axios.post("/api/events/upload", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
 

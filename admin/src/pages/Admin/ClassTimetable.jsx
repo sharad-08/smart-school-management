@@ -146,7 +146,7 @@
 
 import React, { useState, useContext, useEffect } from "react";
 import { Appcontext } from "../../context/Appcontext";
-import axios from "axios";
+import axios from "../../api";
 import { toast } from "react-toastify";
 
 
@@ -168,13 +168,13 @@ const ClassTimeTable = () => {
       setLoading(true);
       try {
         // 1️⃣ Generate class timetable (backend will use teacher schedules)
-        await axios.post("http://localhost:4000/api/classtimetable/generate", {
+        await axios.post("/api/classtimetable/generate", {
           className: selectedClass,
         });
 
         // 2️⃣ Fetch class timetable
         const res = await axios.get(
-          `http://localhost:4000/api/classtimetable/${selectedClass}`
+          `/api/classtimetable/${selectedClass}`
         );
 
         setTimetable({
@@ -217,7 +217,7 @@ const ClassTimeTable = () => {
 
   const handleSave = async () => {
   try {
-    await axios.post("http://localhost:4000/api/classtimetable/save", {
+    await axios.post("/api/classtimetable/save", {
       className: selectedClass,
       schedule: timetable[selectedClass],
     });

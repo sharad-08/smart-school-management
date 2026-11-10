@@ -1,32 +1,12 @@
-// import multer from "multer";
-
-// const storage = multer.diskStorage({});
-
-// const upload = multer({ storage });
-
-// export default upload;
-
-
-
-// const storage = multer.diskStorage({});
-// const storage = multer.memoryStorage();
-// const upload = multer({
-//   storage,
-//   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
-// });
-
-// export default upload;
 import multer from "multer";
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/");
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + "-" + file.originalname);
+export default multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 4 * 1024 * 1024 },
+  fileFilter(req, file, callback) {
+    if (!["image/jpeg", "image/png", "image/webp", "image/gif"].includes(file.mimetype)) {
+      return callback(Object.assign(new Error("Unsupported image format"), { status: 400 }));
+    }
+    callback(null, true);
   },
 });
-
-const upload = multer({ storage });
-
-export default upload;

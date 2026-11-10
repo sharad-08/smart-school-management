@@ -1,24 +1,24 @@
- import React, { useState, useRef } from "react";
+import React, { useContext, useRef } from "react";
+import { Appcontext } from "../../context/Appcontext";
+import assets from "../../assets/assets";
 
 const StudentProfile = () => {
   const idCardRef = useRef();
 
-  const [student, setStudent] = useState({
-    firstName: "Sharad",
-    middleName: "Kumar",
-    lastName: "Singavniya",
-    fatherName: "Ramesh Singh",
-    motherName: "Sita Devi",
-    className: "10th",
-    section: "A",
-    rollNumber: "23",
-    phone: "9876543210",
-    emergency: "9123456780",
-    email: "sharad@email.com",
-    address: "Jaipur, Rajasthan",
-    aadhar: "1234 5678 9012",
-    samagra: "SAM123456",
-  });
+  const { studentProfile } = useContext(Appcontext);
+  if (!studentProfile) return <p>Student profile is unavailable.</p>;
+
+  const student = {
+    name: studentProfile.Name,
+    admissionId: studentProfile.AdmissionID,
+    fatherName: studentProfile.FatherName,
+    motherName: studentProfile.MotherName,
+    className: studentProfile.Class,
+    section: studentProfile.Section,
+    rollNumber: studentProfile.RollNumber,
+    emergency: studentProfile.EmergencyNumber,
+    email: studentProfile.Parentemail,
+  };
 
   const downloadID = () => {
     window.print();
@@ -40,13 +40,10 @@ const StudentProfile = () => {
           {/* PROFILE PHOTO */}
           <div className="flex flex-col items-center">
             <img
-              src="https://via.placeholder.com/150"
+              src={studentProfile.Profile || assets.logo}
               alt="student"
               className="w-40 h-40 rounded-full border-4 border-blue-500 object-cover hover:scale-105 transition duration-300"
             />
-            <button className="mt-3 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-              Upload Photo
-            </button>
           </div>
 
           {/* STUDENT DETAILS */}
@@ -65,18 +62,6 @@ const StudentProfile = () => {
           </div>
         </div>
 
-        {/* DOCUMENT UPLOAD */}
-        <div className="mt-6 grid md:grid-cols-2 gap-4">
-          <div className="bg-gray-50 p-4 rounded-lg hover:bg-blue-50 transition">
-            <p className="font-semibold mb-2">Upload Aadhaar Card</p>
-            <input type="file" className="w-full border p-2 rounded" />
-          </div>
-
-          <div className="bg-gray-50 p-4 rounded-lg hover:bg-blue-50 transition">
-            <p className="font-semibold mb-2">Upload Samagra ID</p>
-            <input type="file" className="w-full border p-2 rounded" />
-          </div>
-        </div>
       </div>
 
       {/* ================= ID CARD SECTION ================= */}
@@ -99,13 +84,13 @@ const StudentProfile = () => {
 
             <div className="flex mt-4">
               <img
-                src="https://via.placeholder.com/80"
+                src={studentProfile.Profile || assets.logo}
                 alt="student"
                 className="w-20 h-20 rounded-lg border"
               />
 
               <div className="ml-4 text-sm">
-                <p><b>Name:</b> {student.firstName} {student.lastName}</p>
+                <p><b>Name:</b> {student.name}</p>
                 <p><b>Class:</b> {student.className}</p>
                 <p><b>Section:</b> {student.section}</p>
                 <p><b>Roll No:</b> {student.rollNumber}</p>

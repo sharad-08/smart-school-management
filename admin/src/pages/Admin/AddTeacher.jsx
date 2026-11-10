@@ -1,24 +1,9 @@
- import React, { useState, useEffect } from "react";
- import { useContext } from "react";
-import { Appcontext } from "../../context/Appcontext"; // path adjust karo
+import React, { useState, useContext } from "react";
+import { Appcontext } from "../../context/Appcontext";
 
 const AddTeacher = () => {
-   const { addTeacher,numberofteacher,getTeachers } = useContext(Appcontext);
-  
-const generateTeacherId = async (department, subject) => {
-  const year = new Date().getFullYear();
+  const { addTeacher } = useContext(Appcontext);
 
-  // Count teachers of same department
-  const numberOfTeachers = await teacherModel.countDocuments({ department });
-
-  const nextNumber = numberOfTeachers + 1;
-  const paddedNumber = String(nextNumber).padStart(3, "0");
-
-  const deptCode = department.substring(0, 3).toUpperCase();
-  const subCode = subject.substring(0, 2).toUpperCase();
-
-  return `${deptCode}${subCode}${year}${paddedNumber}`;
-};
   /* ================= STATE ================= */
   const [formData, setFormData] = useState({
     teacherId: "",
@@ -52,13 +37,6 @@ const generateTeacherId = async (department, subject) => {
     className:"",
     section:"",
   });
-
-  useEffect(() => {
-    setFormData((prev) => ({
-      ...prev,
-      // teacherId: generateTeacherId(),
-    }));
-  }, []);
 
   /* ================= HANDLE CHANGE ================= */
   const handleChange = (e) => {
@@ -113,7 +91,7 @@ const handleSubmit = async (e) => {
   data.append("city", formData.city);
   data.append("state", formData.state);
   data.append("pincode", formData.pincode);
-  data.append("password", formData.dob);
+  data.append("password", formData.password);
   data.append("classTeacher",formData.classTeacher);
   data.append("className",formData.className);
   data.append("section",formData.section);
@@ -129,6 +107,7 @@ const handleSubmit = async (e) => {
     setFormData({
       teacherId: "",
       status: "Active",
+      password: "",
       fullName: "",
       photo: null,
       gender: "",
@@ -161,6 +140,11 @@ const handleSubmit = async (e) => {
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-8">
+          <label className="block">
+            Initial password
+            <input type="password" name="password" minLength={12} maxLength={72} value={formData.password}
+              onChange={handleChange} required className="block border rounded p-2" />
+          </label>
 
           {/* ================= TEACHER BASIC ================= */}
           <SectionTitle title="Teacher Basic Information" />

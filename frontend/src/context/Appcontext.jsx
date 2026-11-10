@@ -241,8 +241,7 @@
 //   const [role, setRole] = useState(localStorage.getItem("role") || null);
 
 //   const [studentsdata, setStudentsdata] = useState([]);
-//   const [teachersdata, setTeachersdata] = useState([]);
-//   const [teacherProfile, setTeacherProfile] = useState(null);
+// //   const [teacherProfile, setTeacherProfile] = useState(null);
 
 //   // 🟢 Marks Section State
 //   const [teacherStudents, setTeacherStudents] = useState([]);
@@ -272,7 +271,7 @@
 //   }, [role]);
 
 //   // ===============================
-//   // GET ALL STUDENTS (ADMIN)
+//   // GET STUDENTS IN THE TEACHER’S CLASS
 //   // ===============================
 
 //   const getAllStudents = async () => {
@@ -497,8 +496,7 @@
 //     studentsdata,
 //     teachersdata,
 //     getAllStudents,
-//     getAllTeachers,
-//     getTeacherProfile,
+// //     getTeacherProfile,
 //     teacherProfile,
 
 //     // Attendance
@@ -526,7 +524,7 @@
 
 
 import React, { createContext, useState, useEffect } from "react";
-import axios from "axios";
+import axios from "../api";
 
 export const Appcontext = createContext();
 
@@ -536,9 +534,9 @@ const AppcontextProvider = ({ children }) => {
   // ===============================
   const [token, setToken] = useState(localStorage.getItem("token") || null);
   const [role, setRole] = useState(localStorage.getItem("role") || null);
+  const authHeaders = { Authorization: `Bearer ${token}` };
 
   const [studentsdata, setStudentsdata] = useState([]);
-  const [teachersdata, setTeachersdata] = useState([]);
 
   const [teacherProfile, setTeacherProfile] = useState(null);
   const [studentProfile, setStudentProfile] = useState(null);
@@ -569,11 +567,11 @@ const AppcontextProvider = ({ children }) => {
   }, [role]);
 
   // ===============================
-  // GET ALL STUDENTS (ADMIN)
+  // GET STUDENTS IN THE TEACHER’S CLASS
   // ===============================
   const getAllStudents = async () => {
     try {
-      const res = await axios.get("http://localhost:4000/api/admin/studentsdata");
+      const res = await axios.get("/api/marks/students", { headers: authHeaders });
 
       if (res.data.success) {
         setStudentsdata(res.data.students);
@@ -585,27 +583,11 @@ const AppcontextProvider = ({ children }) => {
   };
 
   // ===============================
-  // GET ALL TEACHERS (ADMIN)
-  // ===============================
-  const getAllTeachers = async () => {
-    try {
-      const res = await axios.get("http://localhost:4000/api/admin/teachersdata");
-
-      if (res.data.success) {
-        setTeachersdata(res.data.teachers);
-        return res.data.teachers;
-      }
-    } catch (error) {
-      console.log("Teacher fetch error:", error.message);
-    }
-  };
-
-  // ===============================
   // GET TEACHER PROFILE
   // ===============================
   const getTeacherProfile = async () => {
     try {
-      const res = await axios.get("http://localhost:4000/api/auth/profile", {
+      const res = await axios.get("/api/auth/profile", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -616,6 +598,7 @@ const AppcontextProvider = ({ children }) => {
         return res.data.teacher;
       }
     } catch (error) {
+      if (error.response?.status === 401) logoutUser();
       console.log("Teacher profile fetch error:", error.message);
     }
   };
@@ -625,7 +608,7 @@ const AppcontextProvider = ({ children }) => {
   // ===============================
   const getStudentProfile = async () => {
     try {
-      const res = await axios.get("http://localhost:4000/api/auth/profile", {
+      const res = await axios.get("/api/auth/profile", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -636,6 +619,7 @@ const AppcontextProvider = ({ children }) => {
         return res.data.student;
       }
     } catch (error) {
+      if (error.response?.status === 401) logoutUser();
       console.log("Student profile fetch error:", error.message);
     }
   };
@@ -660,12 +644,12 @@ const AppcontextProvider = ({ children }) => {
   // ===============================
   const saveAttendance = async (attendance, className, section, date) => {
     try {
-      const res = await axios.post("http://localhost:4000/api/attendance/save", {
+      const res = await axios.post("/api/attendance/save", {
         attendanceData: attendance,
         className,
         section,
         date,
-      });
+      }, { headers: authHeaders });
 
       alert(res.data.message);
     } catch (error) {
@@ -676,8 +660,9 @@ const AppcontextProvider = ({ children }) => {
 
   const getDailyAttendance = async (className, section, date) => {
     try {
-      const res = await axios.get("http://localhost:4000/api/attendance/daily", {
+      const res = await axios.get("/api/attendance/daily", {
         params: { className, section, date },
+        headers: authHeaders,
       });
 
       return res.data;
@@ -688,8 +673,9 @@ const AppcontextProvider = ({ children }) => {
 
   const getMonthlyReport = async (studentId, month, year) => {
     try {
-      const res = await axios.get("http://localhost:4000/api/attendance/monthly", {
+      const res = await axios.get("/api/attendance/monthly", {
         params: { studentId, month, year },
+        headers: authHeaders,
       });
 
       return res.data;
@@ -701,7 +687,8 @@ const AppcontextProvider = ({ children }) => {
   const getAttendancePercentage = async (studentId) => {
     try {
       const res = await axios.get(
-        `http://localhost:4000/api/attendance/percentage/${studentId}`
+        `/api/attendance/percentage/${studentId}`,
+        { headers: authHeaders }
       );
 
       return res.data;
@@ -715,7 +702,7 @@ const AppcontextProvider = ({ children }) => {
   // ===============================
   const getTeacherStudents = async () => {
     try {
-      const res = await axios.get("http://localhost:4000/api/marks/students", {
+      const res = await axios.get("/api/marks/students", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -733,7 +720,7 @@ const AppcontextProvider = ({ children }) => {
   const saveStudentMarks = async (examType, outOf, marksArray) => {
     try {
       const res = await axios.post(
-        "http://localhost:4000/api/marks/save",
+        "/api/marks/save",
         {
           examType,
           outOf,
@@ -756,7 +743,7 @@ const AppcontextProvider = ({ children }) => {
   const getExamMarks = async (examType) => {
     try {
       const res = await axios.get(
-        `http://localhost:4000/api/marks/exam/${examType}`,
+        `/api/marks/exam/${examType}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -796,8 +783,6 @@ const AppcontextProvider = ({ children }) => {
 
     studentsdata,
     setStudentsdata,
-    teachersdata,
-    setTeachersdata,
 
     teacherProfile,
     setTeacherProfile,
@@ -808,7 +793,6 @@ const AppcontextProvider = ({ children }) => {
     getStudentProfile,
 
     getAllStudents,
-    getAllTeachers,
 
     // Attendance
     saveAttendance,

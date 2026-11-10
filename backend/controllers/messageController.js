@@ -1,3 +1,4 @@
+import Student from "../models/studentModel.js";
 
 import Message from "../models/messageModel.js";
 import Teacher from "../models/teacherModel.js";
@@ -31,11 +32,12 @@ export const sendMessage = async (req, res) => {
 // ✅ Get Messages for Students
 export const getMessagesForStudent = async (req, res) => {
   try {
-    const { className, section } = req.query;
+    const student = await Student.findById(req.user.id).select("Class Section");
+    if (!student) return res.status(404).json({ success: false, message: "Student not found" });
 
     const messages = await Message.find({
-      className,
-      section,
+      className: student.Class,
+      section: student.Section,
     }).sort({ createdAt: -1 });
 
     res.json({ success: true, messages });

@@ -2,9 +2,12 @@ import express from "express";
 import { sendMessage, getMessagesForStudent } from "../controllers/messageController.js";
 import authMiddleware from "../middlewares/authMiddleware.js";
 
-const router = express.Router();
+import requireRole from "../middlewares/roleMiddleware.js";
 
-router.post("/send", authMiddleware, sendMessage);
-router.get("/student", getMessagesForStudent);
+const router = express.Router();
+router.use(authMiddleware);
+
+router.post("/send", requireRole("teacher"), sendMessage);
+router.get("/student", requireRole("student"), getMessagesForStudent);
 
 export default router;

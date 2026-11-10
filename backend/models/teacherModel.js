@@ -9,6 +9,8 @@ const teacherSchema = new mongoose.Schema(
       trim: true,
     },
 
+    password: { type: String, select: false },
+
     status: {
       type: String,
      

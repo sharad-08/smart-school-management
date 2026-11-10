@@ -205,10 +205,10 @@
 // };
 
 import React, { createContext, useState, useMemo } from "react";
-import axios from "axios";
+import axios from "../api";
 import { toast } from "react-toastify";
 
-const API = "http://localhost:4000/api/admin";
+const API = "/api/admin";
 
 export const Appcontext = createContext();
 
@@ -249,6 +249,17 @@ export const AppProvider = ({ children }) => {
     } catch (error) {
       toast.error(error.response?.data?.message || error.message);
     }
+  };
+
+  const addTeacher = async (formData) => {
+    try {
+      const { data } = await axios.post(`${API}/add-teacher`, formData);
+      if (data.success) return true;
+      toast.error(data.message);
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message);
+    }
+    return false;
   };
 
   // // ================= NORMALIZE STUDENTS =================
@@ -347,6 +358,7 @@ const normalizedTeachers = useMemo(() => {
     // functions
     getstudent,
     getTeachers,
+    addTeacher,
   };
 
   return (

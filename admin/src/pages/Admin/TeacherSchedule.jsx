@@ -2,7 +2,7 @@
 
 import React, { useState, useContext, useEffect } from "react";
 import { Appcontext } from "../../context/Appcontext";
-import axios from "axios";
+import axios from "../../api";
 import { toast } from "react-toastify";
 
 const classesList = ["10A", "10B", "9A", "9B"];
@@ -49,7 +49,7 @@ const TeacherSchedule = () => {
   const getTimetable = async (teacherId) => {
     try {
       const { data } = await axios.get(
-        `http://localhost:4000/api/teacher-timetable/${teacherId}`,
+        `/api/teacher-timetable/${teacherId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -93,7 +93,7 @@ const TeacherSchedule = () => {
 
     try {
       await axios.post(
-        "http://localhost:4000/api/teacher-timetable",
+        "/api/teacher-timetable",
         {
           teacherId: selectedTeacher._id,
           scheduleData: schedule[selectedTeacher._id],

@@ -2,7 +2,7 @@
 import React, { useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import Facilitysidebar from "../components/Facilitiesidebar";
-import Gallery from "../components/gallery";
+import Gallery from "../components/Gallery";
 import Ourgoal from "../components/Ourgoal";
 import Aboutus from "../components/Aboutus"
 import assets from "../assets/assets"

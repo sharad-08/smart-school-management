@@ -1,36 +1,16 @@
-
 import jwt from "jsonwebtoken";
 
+export default function authMiddleware(req, res, next) {
+  if (req.user) return next();
 
-const authMiddleware = (req, res, next) => {
-    
-  console.log("HEADERS:", req.headers);
-
-  const authHeader = req.headers.authorization;
-
-  if (!authHeader) {
-    console.log("No Authorization header");
-    return res.status(401).json({ message: "No token" });
-  }
-
-  if (!authHeader.startsWith("Bearer ")) {
-    console.log("Authorization format wrong:", authHeader);
-    return res.status(401).json({ message: "Wrong format" });
-  }
-
-  const token = authHeader.split(" ")[1];
-
-  console.log("TOKEN RECEIVED:", token);
+  const token = /^Bearer (\S+)$/i.exec(req.get("Authorization") || "")?.[1];
+  if (!token) return res.status(401).json({ message: "Authentication required" });
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("DECODED:", decoded);
-    req.user = decoded;
-    next();
-  } catch (error) {
-    console.log("JWT ERROR:", error.message);
-    return res.status(401).json({ message: error.message });
+    req.user = jwt.verify(token, process.env.JWT_SECRET, { algorithms: ["HS256"] });
+  } catch {
+    return res.status(401).json({ message: "Invalid or expired token" });
   }
-};
 
-export default authMiddleware;
+  next();
+}

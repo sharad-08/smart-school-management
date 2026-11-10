@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 const studentSchema = new mongoose.Schema({
   Name: { type: String, required: true },
   AdmissionID: { type: String, required: true },
-  Password: { type: String, required: true },
+  Password: { type: String, required: true, select: false },
   Gender: { type: String, required: true },
   DateofBirth: { type: String, required: true },
   BloodGroup: { type: String, required: true },

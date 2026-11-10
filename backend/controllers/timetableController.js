@@ -45,16 +45,17 @@ export const saveTimetable = async (req, res) => {
 export const getTimetableByTeacher = async (req, res) => {
   try {
     const { search } = req.params;
-      console.log("Search value:", search);
-    // 1️⃣ Find teacher by employeeCode OR name
-   const teacher = await Teacher.findOne({
-  $or: [
-    { employeeCode: search },
-    { teacherId: search },
-    { fullName: { $regex: search, $options: "i" } }
-  ]
-});
- console.log("Teacher found:", teacher);
+
+    const teacher = req.user.role === "teacher"
+      ? await Teacher.findById(req.user.id)
+      : await Teacher.findOne({
+          $or: [
+            { employeeCode: search },
+            { teacherId: search },
+            { fullName: new RegExp(RegExp.escape(search), "i") },
+          ],
+        });
+
     if (!teacher) {
       return res.status(404).json({ message: "Teacher not found" });
     }
@@ -62,9 +63,8 @@ export const getTimetableByTeacher = async (req, res) => {
     // 2️⃣ Find timetable using teacher _id
     const timetable = await Timetable.findOne({
       teacher: teacher._id
-    }).populate("teacher");
+    }).populate("teacher", "fullName teacherId employeeCode");
 
-    console.log("Timetable found:", timetable);
     if (!timetable) {
       return res.status(404).json({ message: "No timetable found" });
     }

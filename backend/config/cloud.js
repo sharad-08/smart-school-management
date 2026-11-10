@@ -9,3 +9,16 @@ const connectCloudinary = async () => {
 };
 
 export default connectCloudinary;
+
+export function uploadImage(buffer, options = {}) {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { resource_type: "image", ...options },
+      (error, result) => {
+        if (error) reject(error);
+        else resolve(result);
+      }
+    );
+    stream.end(buffer);
+  });
+}

@@ -1,16 +1,18 @@
- import mongoose from "mongoose";
+import mongoose from "mongoose";
 
-const connectDB = async () => {
-  try {
-    mongoose.connection.on("connected", () => {
-      console.log("Database Connected");
-    });
+let connection;
 
-    await mongoose.connect(process.env.MONGODB_URL);
+export default function connectDB() {
+  const uri = process.env.MONGODB_URI || process.env.MONGODB_URL;
+  if (!uri) throw new Error("MONGODB_URI is required");
 
-  } catch (error) {
-    console.log("Database connection failed:", error);
-  }
-};
+  connection ??= mongoose.connect(uri, {
+    maxPoolSize: 10,
+    serverSelectionTimeoutMS: 5000,
+  }).catch((error) => {
+    connection = undefined;
+    throw error;
+  });
 
-export default connectDB;
+  return connection;
+}

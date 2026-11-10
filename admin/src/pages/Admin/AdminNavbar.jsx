@@ -4,7 +4,7 @@
 import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { Appcontext } from "../../context/Appcontext";
-import assets from "../../../../frontend/src/assets/assets";
+import assets from "../../assets/assets";
 
 const AdminNavbar = () => {
   const navigate = useNavigate();

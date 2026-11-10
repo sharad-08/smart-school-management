@@ -6,11 +6,15 @@ import {
   getAttendancePercentage
 } from "../controllers/attendanceController.js";
 
-const router = express.Router();
+import authMiddleware from "../middlewares/authMiddleware.js";
+import requireRole from "../middlewares/roleMiddleware.js";
 
-router.post("/save", saveAttendance);
-router.get("/daily", getDailyAttendance);
-router.get("/monthly", getMonthlyReport);
-router.get("/percentage/:studentId", getAttendancePercentage);
+const router = express.Router();
+router.use(authMiddleware);
+
+router.post("/save", requireRole("teacher"), saveAttendance);
+router.get("/daily", requireRole("teacher"), getDailyAttendance);
+router.get("/monthly", requireRole("student", "teacher"), getMonthlyReport);
+router.get("/percentage/:studentId", requireRole("student", "teacher"), getAttendancePercentage);
 
 export default router;

@@ -62,6 +62,7 @@ const App = () => {
               <Route path="/student/profile" element={<StudentProfile />} />
               <Route path="/student/teachers" element={<Studentteacher />} />
               <Route path="/student/timetable" element={<Studenttimetable />} />
+              <Route path="*" element={<Navigate to="/student" replace />} />
             </Routes>
           </div>
         </>
@@ -83,6 +84,7 @@ const App = () => {
         <Route path="/teacher/messages" element={<MessageCenter />} />
         <Route path="/teacher/schedule" element={<TeacherSchedule />} />
         <Route path="/teacher/profile" element={<TeacherProfile />} />
+        <Route path="*" element={<Navigate to="/teacher" replace />} />
 
       </Routes>
     </div>
@@ -101,6 +103,8 @@ const App = () => {
             <Route path="/facilities" element={<Facilities />} />
             <Route path="/facilities/:type" element={<Facilities />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/student/*" element={<Navigate to="/login" replace />} />
+            <Route path="/teacher/*" element={<Navigate to="/login" replace />} />
           </Routes>
 
           <Footer />

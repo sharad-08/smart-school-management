@@ -1,3 +1,4 @@
+import adminMiddleware from "../middlewares/adminMiddleware.js";
 import express from "express";
 import {
   generateTimetable,
@@ -6,6 +7,7 @@ import {
 } from "../controllers/classTimetableController.js";
 
 const router = express.Router();
+router.use(adminMiddleware);
 
 // Generate timetable automatically (frontend calls this on class select)
 router.post("/generate", generateTimetable);
