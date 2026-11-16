@@ -39,7 +39,7 @@ const studentSchema = new mongoose.Schema({
   HostelFee: { type: Number },
   FeeStatus: { type: String, required: true },
   Scholership: { type: String },
-  Status: { type: String, required: true },
+  Status: { type: String, enum: ["Active", "Inactive"], required: true },
   Profile: { type: String },
 });
 

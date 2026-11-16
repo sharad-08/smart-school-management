@@ -12,6 +12,9 @@ api.interceptors.request.use((config) => {
 });
 
 api.interceptors.response.use(undefined, (error) => {
+  if (error.response?.data?.code === "TEACHER_READ_ONLY") {
+    window.dispatchEvent(new Event("teacher-read-only"));
+  }
   if (error.response?.status === 401 && !error.config?.url?.endsWith("/login")) {
     localStorage.removeItem("token");
     localStorage.removeItem("role");

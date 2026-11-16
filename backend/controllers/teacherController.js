@@ -57,6 +57,8 @@ section,
       return res.json({ success: false, message: "Missing Details" });
     }
 
+    if (status && !["Active", "Inactive"].includes(status)) return res.status(400).json({ success: false, message: "Choose Active or Inactive status" });
+
     // Validate email
     if (!validator.isEmail(email)) {
       return res.json({ success: false, message: "Invalid Email" });

@@ -61,6 +61,23 @@ const AddStudent = () => {
     scholarship: "No",
   });
 
+  const [rollInfo, setRollInfo] = useState({ loading: false, error: "", count: null });
+  useEffect(() => {
+    const className = formData.className.trim(), section = formData.section.trim();
+    setFormData((previous) => ({ ...previous, rollNumber: "" }));
+    if (!className || !section) { setRollInfo({ loading: false, error: "", count: null }); return; }
+    const controller = new AbortController();
+    setRollInfo({ loading: true, error: "", count: null });
+    const timer = setTimeout(() => {
+      axios.get("/api/admin/next-roll-number", { params: { className, section }, signal: controller.signal }).then(({ data }) => {
+        if (controller.signal.aborted) return;
+        setFormData((previous) => ({ ...previous, rollNumber: data.nextRollNumber }));
+        setRollInfo({ loading: false, error: "", count: data.count });
+      }).catch((error) => { if (!controller.signal.aborted) setRollInfo({ loading: false, error: error.response?.data?.message || "Could not fetch roll number. Choose the class and section again.", count: null }); });
+    }, 250);
+    return () => { clearTimeout(timer); controller.abort(); };
+  }, [formData.className, formData.section]);
+
   const [admissionSuffix, setAdmissionSuffix] = useState(() => crypto.randomUUID().slice(0, 8).toUpperCase());
   const admissionId = formData.className && formData.section
     ? `${formData.className}${formData.section}${new Date().getFullYear()}${admissionSuffix}`
@@ -93,7 +110,7 @@ const AddStudent = () => {
   /* ================= SUBMIT ================= */
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (saving) return;
+    if (saving || rollInfo.loading || !formData.rollNumber) return;
     const passwordInput = e.currentTarget.elements.initialPassword;
     if (!validateForm()) return;
 
@@ -171,8 +188,8 @@ const AddStudent = () => {
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
-      <div className="max-w-5xl mx-auto bg-white shadow-xl rounded-xl p-8">
-        <h2 className="text-3xl font-bold mb-6 text-gray-700">🎓 New Student Admission</h2>
+      <div className="admission-card max-w-5xl mx-auto bg-white border border-gray-200 rounded-lg p-8">
+        <h2 className="text-3xl font-bold mb-6 text-gray-700">New student admission</h2>
 
         <form onSubmit={handleSubmit} className="space-y-8"><fieldset disabled={saving} className="space-y-8">
           <label className="block">
@@ -183,6 +200,7 @@ const AddStudent = () => {
           <SectionTitle title="Student Basic Information" />
           <Grid>
             <Input label="Admission ID" value={admissionId} disabled />
+            <Select label="Status" name="status" options={["Active", "Inactive"]} onChange={handleChange} value={formData.status} />
             <Input label="Full Name" name="fullName" onChange={handleChange} value={formData.fullName} />
             <Select label="Gender" name="gender" onChange={handleChange} options={["Boy","Girl"]} value={formData.gender} />
             <Input type="date" label="Date of Birth" name="dob" onChange={handleChange} value={formData.dob} />
@@ -196,7 +214,8 @@ const AddStudent = () => {
 
           <SectionTitle title="Academic Information" />
           <Grid>
-            <Input label="Roll Number" name="rollNumber" onChange={handleChange} value={formData.rollNumber} />
+            <div><Input label="Roll number (automatic)" name="rollNumber" readOnly value={formData.rollNumber} placeholder={rollInfo.loading ? "Loading…" : "Choose class and section"} />
+              <p className="field-help" role="status">{rollInfo.error || (rollInfo.count !== null ? `${rollInfo.count} students in this class and section. Final roll number is assigned when saved.` : "Numbering is separate for every class and section.")}</p></div>
             <Input label="Class" name="className" required onChange={handleChange} value={formData.className} />
             <Input label="Section" name="section" required onChange={handleChange} value={formData.section} />
             <Input label="Session" name="session" onChange={handleChange} value={formData.session} />
@@ -237,7 +256,7 @@ const AddStudent = () => {
           </Grid>
 
           <div className="text-right">
-            <button type="submit" disabled={saving} className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700">
+            <button type="submit" disabled={saving || rollInfo.loading || !formData.rollNumber} className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700">
               Save Admission
             </button>
           </div>

@@ -4,6 +4,8 @@ import { Menu, X, LogOut, LayoutDashboard, Users, CalendarDays, BookOpen, UserRo
 import { Appcontext } from "../../context/Appcontext";
 import assets from "../../assets/assets";
 
+import SchoolClock from "../SchoolClock";
+
 const navigation = {
   admin: [
     ["/admin", "Overview", LayoutDashboard], ["/admin/students", "Students", GraduationCap],
@@ -65,10 +67,10 @@ export default function PortalLayout() {
     </aside>
     <div className="portal-body">
       <header className="portal-topbar">
-        <div className="topbar-title"><button ref={menuButton} className="mobile-only icon-button" aria-label="Open navigation" aria-expanded={open} onClick={() => setOpen(true)}><Menu size={22} /></button><span className="role-tag">{role}</span><span className="desktop-date">{new Date().toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "long", year: "numeric" })}</span></div>
+        <div className="topbar-title"><button ref={menuButton} className="mobile-only icon-button" aria-label="Open navigation" aria-expanded={open} onClick={() => setOpen(true)}><Menu size={22} /></button><span className="role-tag">{role}</span><SchoolClock /></div>
         <div className="topbar-user">{photo ? <img className="avatar" src={photo} alt="" /> : <span className="avatar avatar-text">{name.slice(0, 1)}</span>}<span className="user-name">{name}</span><button className="icon-button" title="Sign out" aria-label="Sign out" onClick={logoutUser}><LogOut size={19} /></button></div>
       </header>
-      <main id="portal-content" className="portal-content"><Outlet /></main>
+      <main id="portal-content" className="portal-content">{role === "teacher" && teacherProfile?.status?.trim().toLowerCase() === "inactive" && <p className="read-only-note" role="status">Your account is inactive. You can view school records, but cannot make changes. Contact the administrator to reactivate it.</p>}<Outlet /></main>
       <footer className="portal-footer">© {new Date().getFullYear()} Nimar Academy · School portal</footer>
     </div>
   </div>;

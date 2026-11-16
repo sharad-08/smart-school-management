@@ -45,6 +45,12 @@ export default function AppcontextProvider({ children }) {
     return () => { active = false; };
   }, [token, role, profileVersion]);
 
+  useEffect(() => {
+    const onReadOnly = () => setTeacherProfile((profile) => profile ? { ...profile, status: "Inactive" } : profile);
+    window.addEventListener("teacher-read-only", onReadOnly);
+    return () => window.removeEventListener("teacher-read-only", onReadOnly);
+  }, []);
+
   const refreshProfile = useCallback(() => setProfileVersion((value) => value + 1), []);
   const getAllStudents = useCallback(async () => {
     try {
@@ -103,6 +109,7 @@ export default function AppcontextProvider({ children }) {
 
   return <Appcontext.Provider value={{
     token, setToken, role, setRole, teacherProfile, setTeacherProfile,
+    teacherReadOnly: teacherProfile?.status?.trim().toLowerCase() === "inactive",
     studentProfile, setStudentProfile, studentsdata, setStudentsdata,
     teacherStudents, setTeacherStudents, profileLoading, profileError, refreshProfile,
     getTeacherProfile: refreshProfile, getStudentProfile: refreshProfile,

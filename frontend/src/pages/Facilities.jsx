@@ -17,13 +17,13 @@ const Facilities = () => {
   }, [type]);
 
   return (
-    <div className="flex">
+    <div className="facilities-layout">
 
       {/* Sidebar */}
       <Facilitysidebar />
 
       {/* Right Content */}
-      <div className="flex-1 md:ml-64">
+      <div className="facilities-content">
 
         <Events_activite />
         <FacilitiesC />

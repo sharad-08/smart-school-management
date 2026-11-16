@@ -231,3 +231,17 @@ Built for managing school operations through a centralized digital platform.
 
 If you find this project useful, consider giving it a ⭐ on GitHub.
 
+
+### Admissions and account status
+
+- Add Student and Add Teacher include Active / Inactive status. Inactive accounts
+  can still sign in. An inactive teacher can read records but every API mutation
+  is rejected using their current database status, including existing sessions.
+- Student roll numbers are assigned by the backend for each class and section.
+  The admission form shows the current student count and suggested next number.
+  An atomic counter starts above existing numeric rolls and reserves each new
+  number separately. The final saved number can change if another admission is
+  saved first. Existing students are not renumbered, and failed admissions can
+  leave a gap. Class and section numbering does not reset with the session year.
+- Attendance uses checkboxes: checked means Present, unchecked means Absent.
+  Review the list before saving. The header clock uses Asia/Kolkata (IST).

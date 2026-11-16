@@ -1,7 +1,9 @@
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Eye, EyeOff, ArrowRight, ShieldCheck } from "lucide-react";
+import { Eye, EyeOff, ArrowRight, BookOpen } from "lucide-react";
 import { Appcontext } from "../context/Appcontext";
+import assets from "../assets/assets";
+import SchoolClock from "../components/SchoolClock";
 import api, { errorMessage } from "../api";
 
 export default function Login() {
@@ -37,9 +39,10 @@ export default function Login() {
   }
 
   return <div className="login-page">
-    <section className="login-intro"><p className="eyebrow">Nimar Academy</p><h1>One school.<br />A connected community.</h1><p>Attendance, learning and school life, together in one place.</p><div className="login-trust"><ShieldCheck /><span>A dedicated workspace for every role</span></div></section>
+    <header className="login-header"><Link to="/" className="login-school"><img src={assets.logo} alt="Nimar Academy" /><span>Rahadkot, Madhya Pradesh</span></Link><SchoolClock /></header>
+    <main className="login-shell">
     <section className="login-form-panel"><div className="login-card">
-      <p className="eyebrow">Welcome back</p><h2>Sign in to your portal</h2><p className="muted">Choose your role to continue.</p>
+      <p className="eyebrow">School portal</p><h1>Welcome back</h1><p className="muted">Sign in to your school account.</p>
       <div className="role-picker" aria-label="Choose account type">{["student", "teacher", "admin"].map((value) => <button key={value} type="button" disabled={busy} aria-pressed={role === value} className={role === value ? "chosen" : ""} onClick={() => { chooseRole(value); setId(""); setPassword(""); setError(""); }}>{value}</button>)}</div>
       <form onSubmit={handleLogin}>
         <label htmlFor="school-id">{role === "admin" ? "Admin email" : `${role === "student" ? "Admission" : "Teacher"} ID`}</label>
@@ -52,5 +55,7 @@ export default function Login() {
       <p className="login-help">Need help signing in? Contact your school administrator to reset your password.</p>
       <Link to="/" className="text-link">← Back to school website</Link>
     </div></section>
+    <aside className="login-photo"><img src={assets.building} alt="Nimar Academy school building" /><div><BookOpen size={24} /><h2>Nimar Academy</h2><p>Your timetable, attendance and results — all in one place.</p></div></aside>
+    </main><footer className="login-footer">Nimar Academy · Student, teacher &amp; administrator access</footer>
   </div>;
 }

@@ -138,10 +138,10 @@ const handleSubmit = async (e) => {
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
 
-      <div className="max-w-5xl mx-auto bg-white shadow-xl rounded-xl p-8">
+      <div className="admission-card max-w-5xl mx-auto bg-white border border-gray-200 rounded-lg p-8">
 
         <h2 className="text-3xl font-bold mb-6 text-gray-700">
-          👩‍🏫 Add New Teacher
+          Add teacher
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-8"><fieldset disabled={saving} className="space-y-8">
@@ -155,7 +155,8 @@ const handleSubmit = async (e) => {
           <SectionTitle title="Teacher Basic Information" />
 
           <Grid>
-            <Input label="Teacher ID" value={formData.teacherId} disabled />
+            <Input label="Teacher ID" value={formData.teacherId} placeholder="Assigned after saving" disabled />
+            <Select label="Status" name="status" options={["Active", "Inactive"]} onChange={handleChange} value={formData.status} />
             <Input label="Full Name" name="fullName" onChange={handleChange} value={formData.fullName} />
             <Select label="Gender" name="gender" onChange={handleChange} options={["Male","Female"]} value={formData.gender} />
             <Input type="date" label="Date of Birth" name="dob" onChange={handleChange} value={formData.dob} />

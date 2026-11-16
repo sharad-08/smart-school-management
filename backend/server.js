@@ -5,6 +5,7 @@ import adminRouter from "./routes/adminRoutes.js";
 import timetableRoute from "./routes/timetableRoutes.js";
 import authMiddleware from "./middlewares/authMiddleware.js";
 import connectDB from "./config/db.js";
+import teacherWriteAccess from "./middlewares/teacherWriteAccess.js";
 import classtimetableRouter from "./routes/classTimetableRoutes.js";
 import uploadphotos from "./routes/uploadphotoRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
@@ -50,6 +51,8 @@ app.use("/api", async (req, res, next) => {
 
   next();
 });
+
+app.use("/api", teacherWriteAccess);
 
 app.use("/api/admin", adminRouter);
 app.use("/api/teacher-timetable", timetableRoute);

@@ -241,3 +241,132 @@ a { text-decoration: none; }
 
 .sidebar-brand img { height: 52px; object-fit: cover; }
 .public-brand img { height: 56px; object-fit: cover; }
+
+/* School layout: keep navigation in its own column and text comfortable to read. */
+:root { font-size: 17px; }
+.portal-sidebar { width: 248px; }
+.portal-body { margin-left: 248px; width: calc(100% - 248px); }
+.portal-content { min-width: 0; }
+.portal h2 { font-size: 1.22rem; }
+.nav-item, .button, .portal table { font-size: .95rem; }
+.portal th { font-size: .8rem; }
+.user-name, .role-tag, .filter-label { font-size: .88rem; }
+.record-filters label, .form-grid label, .reset-password { font-size: .88rem; }
+.badge, .stat-detail, .details-grid dt, .login-help { font-size: .83rem; }
+.school-clock { display: flex; flex-direction: column; gap: 2px; color: #607078; font-size: .73rem; font-variant-numeric: tabular-nums; line-height: 1.45; white-space: nowrap; }
+.school-clock strong { color: #283f48; font-weight: 500; font-size: .83rem; }
+.school-clock small { font-size: .65rem; }
+.public-clock { margin-left: auto; }
+.public-links { gap: 22px; font-size: .95rem; }
+.read-only-note { border: 1px solid #e5d2a3; background: #fff9e8; padding: 14px 18px; border-radius: 6px; color: #795b26; font-size: .92rem; }
+.field-help { color: #657580; font-size: .82rem; line-height: 1.6; margin-top: 8px; }
+.portal input[type="checkbox"] { width: 20px; height: 20px; min-height: 20px; padding: 0; accent-color: #125b53; flex-shrink: 0; cursor: pointer; }
+.attendance-toggle { display: inline-flex; align-items: center; gap: 10px; min-height: 32px; white-space: nowrap; }
+.portal .admission-card { padding: 28px; }
+.portal input[readonly] { background: #f4f7f8; color: #4e6570; }
+.facilities-layout { display: grid; grid-template-columns: 228px minmax(0, 1fr); align-items: start; gap: 28px; }
+.facilities-content { min-width: 0; }
+.facilities-sidebar { position: sticky; top: 24px; padding: 20px 16px; background: #fff; border: 1px solid #dde3e6; border-radius: 8px; max-height: calc(100dvh - 48px); overflow-y: auto; }
+.facilities-sidebar-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.facilities-sidebar-heading h2 { font-size: 1.2rem; font-weight: 600; }
+.facilities-sidebar nav { display: flex; flex-direction: column; gap: 6px; }
+.facility-link { padding: 13px 12px; color: #354b54; border-radius: 5px; font-size: .96rem; border-left: 3px solid transparent; }
+.facility-link:hover { background: #f1f5f4; }
+.facility-link.selected { background: #edf3f0; color: #145c50; border-left-color: #267764; font-weight: 500; }
+.facilities-toolbar, .facilities-close, .facilities-backdrop { display: none; }
+.facilities-content > * + * { margin-top: 30px; }
+.facilities-content img { max-width: 100%; }
+/* A straightforward school sign-in page. */
+.login-page { display: flex; flex-direction: column; min-height: 100dvh; background: #f2f4f5; }
+.login-header { display: flex; justify-content: space-between; align-items: center; padding: 18px max(24px, calc((100vw - 1120px) / 2)); background: white; border-bottom: 1px solid #dfe5e7; gap: 20px; }
+.login-school { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+.login-school img { width: 155px; height: 52px; object-fit: cover; }
+.login-school span { font-size: .72rem; color: #67767e; }
+.login-shell { display: grid; grid-template-columns: 1fr 1fr; width: min(1000px, calc(100% - 48px)); margin: auto; background: white; border: 1px solid #dce2e5; border-radius: 10px; overflow: hidden; }
+.login-form-panel { padding: 38px 40px; }
+.login-card { max-width: 400px; }
+.login-card h1 { font-size: 2rem; margin-bottom: 10px; letter-spacing: -.025em; }
+.login-card .eyebrow { color: #60727b; font-size: .76rem; letter-spacing: .08em; }
+.login-card form > label { font-size: .92rem; }
+.login-card input { min-height: 48px; }
+.role-picker { background: #f3f5f6; border: 1px solid #e1e6e9; border-radius: 6px; }
+.role-picker button { font-size: .9rem; }
+.role-picker button.chosen { background: white; color: #194f68; box-shadow: 0 1px 3px #20382b20; }
+.login-submit { background: #235d76; border-color: #235d76; min-height: 48px; }
+.login-submit:hover { background: #1a4a61; }
+.login-help { margin: 22px 0; font-size: .86rem; }
+.login-card > .text-link { font-size: .88rem; }
+.login-photo { display: flex; flex-direction: column; background: #eaf0f2; }
+.login-photo > img { width: 100%; height: 310px; object-fit: cover; }
+.login-photo > div { padding: 30px; }
+.login-photo h2 { font-size: 1.5rem; margin: 14px 0 8px; color: #254859; }
+.login-photo p { line-height: 1.7; color: #566d78; max-width: 310px; }
+.login-footer { padding: 24px; text-align: center; font-size: .78rem; color: #71828a; }
+@media (min-width: 768px) and (max-width: 1000px) {
+  .portal-sidebar { width: 220px; padding: 0 10px; }
+  .portal-body { margin-left: 220px; width: calc(100% - 220px); }
+  .portal-topbar { padding: 0 20px; }
+  .user-name { max-width: 110px; }
+}
+@media (max-width: 899px) {
+  .facilities-layout { display: block; }
+  .facilities-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 24px; padding: 12px 0; font-size: .95rem; }
+  .facilities-sidebar { position: fixed; inset: 0 auto 0 0; top: 0; width: min(310px, 85vw); height: 100dvh; max-height: none; border: 0; border-radius: 0; padding: 26px 20px; z-index: 110; transform: translateX(-100%); visibility: hidden; transition: transform .2s, visibility .2s; }
+  .facilities-sidebar.is-open { transform: translateX(0); visibility: visible; }
+  .facilities-close { display: inline-flex; }
+  .facilities-backdrop { display: block; position: fixed; inset: 0; z-index: 100; background: #132a3a88; border: 0; }
+  .login-shell { margin: 30px auto; grid-template-columns: 1fr; max-width: 510px; }
+  .login-photo { display: none; }
+  .public-clock { display: none; }
+}
+@media (max-width: 767px) {
+  .portal-body { margin-left: 0; width: 100%; }
+  .portal-topbar { min-height: 78px; height: auto; padding: 10px 12px; }
+  .topbar-title { gap: 8px; flex-wrap: wrap; }
+  .topbar-title .school-clock { padding-left: 4px; }
+  .topbar-title .role-tag { display: none; }
+  .portal .admission-card { padding: 20px 16px; }
+  .portal td, .portal th { padding: 14px 16px; }
+  .portal-content { padding: 24px 14px; }
+  .login-header { padding: 14px 18px; gap: 10px; }
+  .login-school img { width: 130px; }
+  .login-school span { font-size: .65rem; }
+  .login-form-panel { padding: 28px 24px; }
+  .login-shell { width: calc(100% - 28px); }
+  .school-clock { font-size: .69rem; }
+  .school-clock strong { font-size: .78rem; }
+  .facilities-toolbar > span { max-width: 130px; }
+}
+@media (max-width: 767px) {
+  .public-nav { height: auto; min-height: 110px; padding-top: 10px; padding-bottom: 10px; flex-wrap: wrap; gap: 8px 14px; }
+  .public-nav > .mobile-only { margin-left: auto; }
+  .public-clock { display: block; order: 3; flex-basis: 100%; margin: 0; }
+  .public-clock .school-clock { flex-direction: row; align-items: center; justify-content: space-between; }
+  .public-links { top: 100%; }
+}
+.facilities-sidebar.is-open, .portal-sidebar.is-open { transition: transform .2s; }
+.school-facilities { padding: 28px; background: white; border: 1px solid #e0e6e7; border-radius: 8px; }
+.school-facilities > h2 { font-size: 1.6rem; font-weight: 600; margin-bottom: 8px; }
+.facilities-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-top: 28px; }
+.facility-card { border: 1px solid #e0e6e7; border-radius: 6px; padding: 20px; }
+.facility-card > svg { color: #397464; margin-bottom: 18px; }
+.facility-card h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 8px; }
+.facility-card p { color: #667780; font-size: .88rem; line-height: 1.65; }
+@media (max-width: 1100px) { .facilities-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 540px) { .facilities-grid { grid-template-columns: 1fr; } .school-facilities { padding: 22px; } }
+@media (min-width: 768px) and (max-width: 1023px) {
+  .public-clock { display: block; }
+  .public-nav > .mobile-only { display: inline-flex; }
+  .public-links { display: none; position: absolute; top: 100%; left: 0; right: 0; padding: 22px; background: white; border-bottom: 1px solid #d9e3de; box-shadow: 0 10px 15px #23452a0c; }
+  .public-links.is-open { display: flex; align-items: stretch; flex-direction: column; gap: 20px; }
+}
+@media (max-width: 540px) {
+  .attendance-panel table { table-layout: fixed; }
+  .attendance-panel td, .attendance-panel th { padding: 14px 10px; white-space: normal; overflow-wrap: anywhere; }
+  .attendance-panel th:first-child { width: 42%; }
+  .attendance-panel th:nth-child(2) { width: 20%; }
+  .attendance-panel th:last-child { width: 38%; }
+  .attendance-panel .attendance-toggle { gap: 7px; white-space: normal; }
+  .attendance-panel th .attendance-toggle { font-size: .78rem; }
+  .attendance-panel .panel-heading { flex-direction: column; align-items: stretch; }
+}

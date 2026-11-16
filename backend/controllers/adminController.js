@@ -7,6 +7,7 @@ import bcrypt from "bcrypt";
 import { uploadImage } from "../config/cloud.js";
 import studentModel from "../models/studentModel.js";
 import validator from "validator";
+import { allocateRollNumber } from "./rollNumberController.js";
 
 // admin login
 export const loginAdmin = async (req, res) => {
@@ -48,7 +49,7 @@ export const addStudent = async (req, res) => {
 
     const {
       Name, AdmissionID, Password, Gender, DateofBirth, BloodGroup,
-      Aadhaar, Category, Religion, Nationality, RollNumber, Class,
+      Aadhaar, Category, Religion, Nationality, Class,
       Section, Session, AdmissionDate, PreviousSchool, PreviousClass,
       FatherName, FatherOccupation, FatherContact, MotherName,
       MotherOccupation, MotherContact, Parentemail, AnnualIncome,
@@ -60,7 +61,7 @@ export const addStudent = async (req, res) => {
     // Check required fields
     if (!Name || !AdmissionID || !Password || !Gender || !DateofBirth ||
         !BloodGroup || !Aadhaar || !Category || !Religion || !Nationality ||
-        !RollNumber || !Class || !Section || !Session || !AdmissionDate ||
+        !Class || !Section || !Session || !AdmissionDate ||
         !FatherName || !FatherOccupation || !FatherContact ||
         !MotherName || !MotherOccupation || !MotherContact ||
         !Parentemail || !AnnualIncome || !PermanentAddress || !City ||
@@ -69,6 +70,10 @@ export const addStudent = async (req, res) => {
     ) {
       return res.json({ success: false, message: "Missing Details" });
     }
+
+    if (!["Active", "Inactive"].includes(Status)) return res.status(400).json({ success: false, message: "Choose Active or Inactive status" });
+
+    if (typeof Class !== "string" || !Class.trim() || typeof Section !== "string" || !Section.trim()) return res.status(400).json({ success: false, message: "Choose a class and section" });
 
     // Validate email
     if (!validator.isEmail(Parentemail)) {
@@ -87,11 +92,13 @@ export const addStudent = async (req, res) => {
 
     const profileurl = imageUpload.secure_url;
 
+    const assignedRoll = await allocateRollNumber(Class, Section);
+
     // Save student
     const newStudent = new studentModel({
       Name, AdmissionID, Password: hashedPassword, Gender, DateofBirth,
-      BloodGroup, Aadhaar, Category, Religion, Nationality, RollNumber,
-      Class, Section, Session, AdmissionDate, PreviousSchool, PreviousClass,
+      BloodGroup, Aadhaar, Category, Religion, Nationality, RollNumber: assignedRoll,
+      Class: Class.trim(), Section: Section.trim().toUpperCase(), Session, AdmissionDate, PreviousSchool, PreviousClass,
       FatherName, FatherOccupation, FatherContact, MotherName,
       MotherOccupation, MotherContact, Parentemail, AnnualIncome,
       PermanentAddress, City, State, Pincode, EmergencyNumber,

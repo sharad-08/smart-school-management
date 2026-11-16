@@ -17,6 +17,7 @@ import {
 
 import adminMiddleware from "../middlewares/adminMiddleware.js";
 import upload from "../middlewares/uploadMiddleware.js";
+import { getNextRollNumber } from "../controllers/rollNumberController.js";
 
 const adminRouter = express.Router();
 
@@ -28,6 +29,7 @@ adminRouter.use(adminMiddleware);
 // ----------- Student Routes ----------
 adminRouter.post("/add-student", upload.single("Profile"), addStudent);
 adminRouter.get("/studentsdata", getAllStudents);
+adminRouter.get("/next-roll-number", getNextRollNumber);
 adminRouter.get("/student/:id", getSingleStudent);
 adminRouter.put("/update-student/:id", updateStudent);
 
