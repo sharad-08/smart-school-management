@@ -119,32 +119,45 @@ CLOUDINARY_SECRET_KEY=replace_with_api_secret
 
 ## Deploy on Vercel
 
-Import the same GitHub repository into three Vercel projects. Select
-Node.js 24.x for each project.
+The `frontend` app contains the public school website and all three role portals.
+Use `/login` to choose Administrator, Teacher or Student. After login the app
+opens `/admin`, `/teacher` or `/student`.
 
 | Project | Root directory | Framework preset | Build settings |
 | --- | --- | --- | --- |
 | API | `backend` | Express | Keep the detected defaults |
-| School website | `frontend` | Vite | `npm run build`, output `dist` |
-| Admin panel | `admin` | Vite | `npm run build`, output `dist` |
+| School website and shared portal | `frontend` | Vite | `npm run build`, output `dist` |
 
 1. Set the backend environment variables from the example above in the API
-   project's Production environment. Use a reachable MongoDB URI. Vercel
-   supplies the runtime port.
-2. Deploy the API and open `/api/health` on its assigned domain to check that
-   the Express app responds.
-3. Set `VITE_API_URL` to the API origin, such as
-   `https://your-school-api.vercel.app`, in both Vite projects. Deploy both.
-4. Set the API project's `CORS_ORIGINS` to the two web app origins separated by
-   a comma, then redeploy the API. Include the exact scheme and domain without
-   a trailing slash. Sign in to each app to verify database connectivity.
-5. Sign out, then reload a nested browser route and check that the app opens
-   its login screen. Verify a small upload using a test record.
+   project's Production environment. Use a reachable MongoDB URI.
+2. Set `VITE_API_URL` in the frontend project to the API origin, such as
+   `https://smart-school-management-nb77.vercel.app`. Choose the Config variable type.
+3. Set `CORS_ORIGINS` on the API project to the frontend origin. Additional
+   allowed origins can be included, separated by commas.
+4. Deploy the backend changes, then the frontend changes. Existing Vercel Git
+   integrations deploy commits to `main` automatically.
+5. Open the frontend's `/login`. Verify all three roles with test accounts.
+   A teacher can save attendance, publish marks and send a class notice.
+   A student sees their own saved records and notices in the portal.
+6. Admins can search, filter, edit and export student and teacher records.
+   Use the record editor's optional password reset field to reset an account.
 
-Keep credentials in the Vercel environment settings. Rotate any previously used
-demo credentials and signing keys. The API accepts photo requests up to
-Vercel's 4.5 MB request limit. Keep the total image size at or below 4 MB to
-leave room for multipart form fields.
+The `admin` directory also provides the earlier standalone admin application.
+The shared frontend includes the updated record editors and navigation.
+
+### Data displayed by the portal
+
+Attendance, marks, fee amounts, teacher assignments, notices and timetables
+come from MongoDB. An empty state appears when a record is unavailable.
+The fee page shows the school's recorded amounts and overall fee status.
+Contact the school office for payments or receipts.
+
+Class timetables follow the existing database model, with one schedule per
+class. Teacher schedules are stored separately. New student and teacher IDs
+include a random suffix to avoid count-based collisions.
+
+Photo uploads use Cloudinary. Keep the combined image size at or below 4 MB
+per request to leave room for multipart form fields within Vercel's 4.5 MB limit.
 
 ### Existing accounts
 

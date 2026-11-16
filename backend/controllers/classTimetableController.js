@@ -1,5 +1,4 @@
 import ClassTimetable from "../models/classModel.js";
-import Teacher from "../models/teacherModel.js";
 
 /* ================= GENERATE TIMETABLE ================= */
 export const generateTimetable = async (req, res) => {
@@ -8,26 +7,18 @@ export const generateTimetable = async (req, res) => {
 
     if (!className) return res.status(400).json({ message: "Class name required" });
 
-    // 1️⃣ Fetch all teachers for this class automatically
-    const teachers = await Teacher.find();
+    const schedule = Object.fromEntries(
+      ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map((day) => [
+        day,
+        Object.fromEntries(["1st", "2nd", "3rd", "4th", "5th"].map((slot) => [
+          slot, { subject: "", teacher: "" },
+        ])),
+      ])
+    );
 
-    // 2️⃣ Prepare empty schedule with teacher & subject if any default mapping exists
-    const schedule = {};
-    ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].forEach((day) => {
-      schedule[day] = {};
-      ["1st", "2nd", "3rd", "4th", "5th"].forEach((slot) => {
-        const teacher = teachers[Math.floor(Math.random() * teachers.length)]; // random assignment
-        schedule[day][slot] = {
-          subject: teacher ? teacher.subject : "",
-          teacher: teacher ? teacher.fullName : "",
-        };
-      });
-    });
-
-    // 3️⃣ Upsert into DB
     const timetable = await ClassTimetable.findOneAndUpdate(
       { className },
-      { className, schedule },
+      { $setOnInsert: { className, schedule } },
       { upsert: true, returnDocument: "after" }
     );
 

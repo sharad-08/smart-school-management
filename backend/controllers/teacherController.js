@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 
 import bcrypt from "bcrypt";
 import { uploadImage } from "../config/cloud.js";
@@ -9,24 +10,11 @@ import validator from "validator";
    ADD TEACHER
 ================================ */
 
-const generateTeacherId = async (department, subject) => {
-  const year = new Date().getFullYear();
-
-  const count = await teacherModel.countDocuments({
-    department,
-    subject,
-  });
-
-  const nextNumber = count + 1;
-  const paddedNumber = String(nextNumber).padStart(3, "0");
-
+const generateTeacherId = (department, subject) => {
   const deptCode = department.substring(0, 3).toUpperCase();
   const subCode = subject.substring(0, 2).toUpperCase();
-
-  return `${deptCode}${subCode}${year}${paddedNumber}`;
+  return `${deptCode}${subCode}${new Date().getFullYear()}${randomUUID().slice(0, 8).toUpperCase()}`;
 };
-
- 
 
 export const addteacher = async (req, res) => {
   try {
@@ -79,7 +67,7 @@ section,
       $or: [{ email }, { employeeCode },  ],
     });
 // 🔥 Generate Teacher ID
-const teacherId = await generateTeacherId(department, subject);
+const teacherId = generateTeacherId(department, subject);
     if (existingTeacher) {
       return res.json({ success: false, message: "Teacher already exists" });
     }
@@ -191,6 +179,11 @@ export const updateTeacher = async (req, res) => {
     teacher.email = req.body.email || teacher.email;
     teacher.contact = req.body.contact || teacher.contact;
     teacher.department = req.body.department || teacher.department;
+
+    for (const field of ["gender", "dob", "employeeCode", "subject", "qualification", "experience",
+      "address", "city", "state", "pincode", "status", "classTeacher", "className", "section"]) {
+      if (Object.hasOwn(req.body, field)) teacher.set(field, req.body[field]);
+    }
 
     // Password update only if sent
     if (Object.hasOwn(req.body, "password")) {

@@ -6,31 +6,6 @@ const Events_Activites = () => {
   return (
     <div className=" bg-slate-50 ">
 
-      {/* ================= Stats Section ================= */}
-      <div className="flex flex-col md:flex-row justify-evenly items-center gap-6 text-center py-4 bg-white  mb-9">
-
-        <div>
-          <p className="text-2xl font-bold text-blue-600">2500+</p>
-          <p className="text-sm text-gray-600">Students Enrolled</p>
-        </div>
-
-        <div>
-          <p className="text-2xl font-bold text-blue-600">150+</p>
-          <p className="text-sm text-gray-600">Expert Teachers</p>
-        </div>
-
-        <div>
-          <p className="text-2xl font-bold text-blue-600">95%</p>
-          <p className="text-sm text-gray-600">Success Rate</p>
-        </div>
-
-        <div>
-          <p className="text-2xl font-bold text-blue-600">15+</p>
-          <p className="text-sm text-gray-600">Years Excellence</p>
-        </div>
-
-      </div>
-
       {/* ================= Title Section ================= */}
       <div className="text-center  bg-slate-50 mb-8 rounded-lg">
         <p className="text-2xl md:text-3xl font-bold">
@@ -42,7 +17,7 @@ const Events_Activites = () => {
       </div>
 
       {/* ================= Images Section ================= */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 px-16 py-9 bg-slate-50 rounded-lg">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 px-4 md:px-10 py-9 bg-slate-50 rounded-lg">
 
         {/* ===== Large Image ===== */}
         <div className="relative overflow-hidden rounded-2xl group h-full">

@@ -36,7 +36,7 @@ const Aboutus = () => {
           </p>
 
           <p className="text-sm md:text-base text-gray-600 mt-4">
-            Bright Future School has been a beacon of educational excellence for over 25 years. 
+            Nimar Academy supports students through classroom learning, school activities and a caring community.
             We are committed to nurturing young minds and preparing them for the challenges 
             of tomorrow through innovative teaching methodologies and state-of-the-art facilities.
           </p>

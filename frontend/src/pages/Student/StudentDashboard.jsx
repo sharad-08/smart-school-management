@@ -1,46 +1,14 @@
-import { useContext } from "react";
-import { Appcontext } from "../../context/Appcontext";
-import SummaryCards from "../../components/student/SummaryCards";
-import AttendanceCalendar from "../../components/student/AttendanceCalendar";
-import MarksChart from "../../components/student/MarksChart";
-import PerformanceCircle from "../../components/student/PerformanceCircle";
-import FeeCard from "../../components/student/FeeCard";
-import ProfileCard from "../../components/student/ProfileCard";
+import { useStudentPortal } from "../../context/StudentPortalContext";
+import { PageHeader, StatCard, EmptyState, QuickLink, dateLabel } from "../../components/portal/UI";
 
-const StudentDashboard = () => {
-  const { studentProfile } = useContext(Appcontext);
-  return (
-    <div className="  min-h-screen p-4">
-
-      <h1 className="text-2xl font-bold mb-6">
-        Welcome back{studentProfile?.Name ? `, ${studentProfile.Name}` : ""} 👋
-      </h1>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-        {/* LEFT SIDE */}
-        <div className="lg:col-span-2 space-y-6">
-
-          <SummaryCards />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <AttendanceCalendar />
-            <MarksChart />
-          </div>
-
-        </div>
-
-        {/* RIGHT SIDE */}
-        <div className="space-y-6">
-          <ProfileCard />
-          <PerformanceCircle />
-          <FeeCard />
-        </div>
-
-      </div>
-
-    </div>
-  );
-};
-
-export default StudentDashboard;
+export default function StudentDashboard() {
+  const { data, reload } = useStudentPortal();
+  const { student, attendance, marks, messages } = data;
+  const present = attendance.filter((record) => record.status === "Present").length;
+  const percentage = attendance.length ? Math.round(present / attendance.length * 100) : null;
+  return <>
+    <PageHeader eyebrow="Student overview" title={`Welcome, ${student.Name}`} description={`Class ${student.Class} · Section ${student.Section} · ${student.AdmissionID}`}><button className="button button-secondary" onClick={reload}>Refresh records</button></PageHeader>
+    <div className="stats-grid"><StatCard label="Attendance" value={percentage === null ? "—" : `${percentage}%`} detail={`${present} present / ${attendance.length} recorded days`} /><StatCard label="Published results" value={marks.length} detail="Subject results entered by your teachers" /><StatCard label="Class notices" value={messages.length} detail="Latest messages from your teachers" /></div>
+    <div className="dashboard-columns"><section className="panel"><div className="panel-heading"><h2>Class notices</h2><span className="badge">Latest 20</span></div>{messages.length ? <div className="notice-list">{messages.map((notice) => <article key={notice._id}><p>{notice.message}</p><small className="muted">{notice.teacherId?.fullName || "School teacher"} · {dateLabel(notice.createdAt)}</small></article>)}</div> : <EmptyState title="You’re all caught up" description="Messages from your class teachers will appear here." />}</section><section><h2 className="section-title">Your school day</h2><div className="quick-links"><QuickLink to="/student/timetable" title="Class timetable" description="See your subjects and teachers." /><QuickLink to="/student/marks" title="Examination results" description="View your published subject marks." /><QuickLink to="/student/profile" title="Student profile" description="Check your school records." /></div></section></div>
+  </>;
+}

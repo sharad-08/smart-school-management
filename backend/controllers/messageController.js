@@ -6,18 +6,25 @@ import Teacher from "../models/teacherModel.js";
 // ✅ Send Message
 export const sendMessage = async (req, res) => {
   try {
-    const { message } = req.body;
+    const { message } = req.body ?? {};
+    if (typeof message !== "string" || !message.trim() || message.length > 2000) {
+      return res.status(400).json({ message: "Enter a message of up to 2000 characters" });
+    }
 
     const teacher = await Teacher.findById(req.user.id);
 
     if (!teacher)
       return res.status(404).json({ success: false, message: "Teacher not found" });
 
+    if (!teacher.className || !teacher.section) {
+      return res.status(403).json({ message: "A class and section assignment is required" });
+    }
+
     const newMessage = await Message.create({
       className: teacher.className,
       section: teacher.section,
       teacherId: teacher._id,
-      message,
+      message: message.trim(),
     });
 
     res.json({ success: true, message: "Message sent successfully", newMessage });

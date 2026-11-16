@@ -1,0 +1,254 @@
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import React, { useState, useContext } from "react";
+import { Appcontext } from "../../context/Admincontext";
+
+const AddTeacher = () => {
+  const navigate = useNavigate();
+  const reject = (message) => { toast.error(message); return false; };
+  const [saving, setSaving] = useState(false);
+  const { addTeacher } = useContext(Appcontext);
+
+  /* ================= STATE ================= */
+  const [formData, setFormData] = useState({
+    teacherId: "",
+    status: "Active",
+
+    fullName: "",
+    photo: null,
+    gender: "",
+    dob: "",
+    contact: "",
+    email: "",
+
+    employeeCode: "",
+    department: "",
+    subject: "",
+    qualification: "",
+    experience: "",
+
+    address: "",
+    city: "",
+    state: "",
+    pincode: "",
+
+    password:"",
+
+
+    classTeacher:"false",
+    className:"",
+    section:"",
+  });
+
+  /* ================= HANDLE CHANGE ================= */
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleFileChange = (e) => {
+    const { name, files } = e.target;
+    setFormData({ ...formData, [name]: files[0] });
+  };
+
+  /* ================= VALIDATION ================= */
+  const validateForm = () => {
+    if (!formData.fullName) return reject("Full Name is required");
+    if (!formData.gender) return reject("Gender is required");
+    if (!/^[0-9]{10}$/.test(formData.contact))
+      return reject("Invalid Contact Number");
+    if (!/\S+@\S+\.\S+/.test(formData.email))
+      return reject("Invalid Email");
+    if (!formData.employeeCode) return reject("Employee Code is required");
+    if (!formData.department) return reject("Department is required");
+    if (!formData.subject) return reject("Subject is required");
+    return true;
+  };
+
+  /* ================= SUBMIT ================= */
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  if (saving) return;
+
+  if (!validateForm()) return;
+
+  const data = new FormData();
+
+  const formattedDob = formData.dob ? new Date(formData.dob).toISOString().split("T")[0] : "";
+
+  data.append("teacherId", formData.teacherId);
+  data.append("status", formData.status);
+  data.append("fullName", formData.fullName);
+  data.append("gender", formData.gender);
+  data.append("dob", formattedDob);   // 👈 fixed here
+  data.append("contact", formData.contact);
+  data.append("email", formData.email);
+  data.append("employeeCode", formData.employeeCode);
+  data.append("department", formData.department);
+  data.append("subject", formData.subject);
+  data.append("qualification", formData.qualification);
+  data.append("experience", formData.experience);
+  data.append("address", formData.address);
+  data.append("city", formData.city);
+  data.append("state", formData.state);
+  data.append("pincode", formData.pincode);
+  data.append("password", formData.password);
+  data.append("classTeacher",formData.classTeacher);
+  data.append("className",formData.className);
+  data.append("section",formData.section);
+
+  if (formData.photo) {
+    data.append("photo", formData.photo);
+  }
+
+  setSaving(true);
+  const success = await addTeacher(data);
+  setSaving(false);
+
+  if (success) {
+    toast.success("Teacher added");
+    navigate("/admin/teachers");
+    setFormData({
+      teacherId: "",
+      status: "Active",
+      password: "",
+      fullName: "",
+      photo: null,
+      gender: "",
+      dob: "",
+      contact: "",
+      email: "",
+      employeeCode: "",
+      department: "",
+      subject: "",
+      qualification: "",
+      experience: "",
+      address: "",
+      city: "",
+      state: "",
+      pincode: "",
+      classTeacher:"false",
+    className:"",
+    section:"",
+    });
+  }
+};
+
+  return (
+    <div className="p-6 bg-gray-100 min-h-screen">
+
+      <div className="max-w-5xl mx-auto bg-white shadow-xl rounded-xl p-8">
+
+        <h2 className="text-3xl font-bold mb-6 text-gray-700">
+          👩‍🏫 Add New Teacher
+        </h2>
+
+        <form onSubmit={handleSubmit} className="space-y-8"><fieldset disabled={saving} className="space-y-8">
+          <label className="block">
+            Initial password
+            <input type="password" name="password" minLength={12} maxLength={72} value={formData.password}
+              onChange={handleChange} required className="block border rounded p-2" />
+          </label>
+
+          {/* ================= TEACHER BASIC ================= */}
+          <SectionTitle title="Teacher Basic Information" />
+
+          <Grid>
+            <Input label="Teacher ID" value={formData.teacherId} disabled />
+            <Input label="Full Name" name="fullName" onChange={handleChange} value={formData.fullName} />
+            <Select label="Gender" name="gender" onChange={handleChange} options={["Male","Female"]} value={formData.gender} />
+            <Input type="date" label="Date of Birth" name="dob" onChange={handleChange} value={formData.dob} />
+            <Input label="Contact Number" name="contact" onChange={handleChange} value={formData.contact} />
+            <Input label="Email" name="email" onChange={handleChange} value={formData.email} />
+            <FileInput label="Profile Photo" name="photo" onChange={handleFileChange} />
+             <Select label="Class teacher" name="classTeacher" onChange={handleChange} options={["false","true"]} value={formData.classTeacher} />
+            <Input label="Assigned class" name="className" onChange={handleChange}value={formData.className} />
+            <Input label="Section" name="section" onChange={handleChange}value={formData.section} />
+
+          </Grid>
+
+          {/* ================= PROFESSIONAL INFO ================= */}
+          <SectionTitle title="Professional Information" />
+
+          <Grid>
+            <Input label="Employee Code" name="employeeCode" onChange={handleChange} value={formData.employeeCode} />
+            <Input label="Department" name="department" onChange={handleChange} value={formData.department} />
+            <Input label="Subject" name="subject" onChange={handleChange} value={formData.subject} />
+            <Input label="Qualification" name="qualification" onChange={handleChange} value={formData.qualification} />
+            <Input type="number" min="0" label="Experience" name="experience" onChange={handleChange} value={formData.experience} />
+          </Grid>
+
+          {/* ================= ADDRESS ================= */}
+          <SectionTitle title="Address Information" />
+
+          <Grid>
+            <Input label="Permanent Address" name="address" onChange={handleChange} value={formData.address} />
+            <Input label="City" name="city" onChange={handleChange} value={formData.city} />
+            <Input label="State" name="state" onChange={handleChange} value={formData.state} />
+            <Input label="Pincode" name="pincode" onChange={handleChange} value={formData.pincode} />
+          </Grid>
+
+          {/* ================= SUBMIT ================= */}
+          <div className="text-right">
+            <button
+              type="submit" disabled={saving}
+              className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700"
+            >
+              Save Teacher
+            </button>
+          </div>
+
+        </fieldset></form>
+      </div>
+    </div>
+  );
+};
+
+export default AddTeacher;
+
+/* ================= REUSABLE COMPONENTS ================= */
+const SectionTitle = ({ title }) => (
+  <h3 className="text-xl font-semibold text-gray-600 border-b pb-2">{title}</h3>
+);
+
+const Grid = ({ children }) => (
+  <div className="grid md:grid-cols-2 gap-4">{children}</div>
+);
+
+const Input = ({ label, type = "text", ...props }) => (
+  <div>
+    <label htmlFor={props.name} className="block font-medium mb-1">{label}</label>
+    <input
+      id={props.name}
+      required={Boolean(props.name) && !["className", "section"].includes(props.name)}
+      type={type}
+      {...props}
+      className="w-full border px-3 py-2 rounded-lg focus:outline-blue-500"
+    />
+  </div>
+);
+
+const Select = ({ label, options, ...props }) => (
+  <div>
+    <label htmlFor={props.name} className="block font-medium mb-1">{label}</label>
+    <select
+      id={props.name}
+      required
+      {...props}
+      className="w-full border px-3 py-2 rounded-lg focus:outline-blue-500"
+    >
+      <option value="">Select</option>
+      {options.map((opt, i) => (
+        <option key={i} value={opt}>{opt}</option>
+      ))}
+    </select>
+  </div>
+);
+
+const FileInput = ({ label, ...props }) => (
+  <div>
+    <label htmlFor={props.name} className="block font-medium mb-1">{label}</label>
+    <input id={props.name} type="file" required accept="image/png,image/jpeg,image/webp" {...props} className="w-full border px-3 py-2 rounded-lg" />
+  </div>
+);

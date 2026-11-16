@@ -20,6 +20,10 @@ const origins = (process.env.CORS_ORIGINS || "http://localhost:5173,http://local
 
 app.use(cors({ origin: origins }));
 app.use(express.json());
+app.use("/api", (_req, res, next) => {
+  res.set("Cache-Control", "private, no-store");
+  next();
+});
 app.use(express.urlencoded({ extended: true }));
 connectCloudinary();
 
@@ -36,7 +40,11 @@ app.use("/api", async (req, res, next) => {
   try {
     await connectDB();
   } catch (error) {
-    console.error("Database connection unavailable:", error.name);
+    console.error("Database connection unavailable:", {
+      name: error.name,
+      code: error.code,
+      configured: Boolean(process.env.MONGODB_URI || process.env.MONGODB_URL),
+    });
     return res.status(503).json({ message: "Database unavailable" });
   }
 
