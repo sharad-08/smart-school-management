@@ -6,6 +6,11 @@ import assets from "../assets/assets";
 import SchoolClock from "../components/SchoolClock";
 import api, { errorMessage } from "../api";
 
+const demoAccounts = [
+  { role: "student", id: "9A2026003", password: "sharad12345678" },
+  { role: "teacher", id: "SCIEN202638651E11", password: "sharad12345678" },
+];
+
 export default function Login() {
   const { setRole, setToken } = useContext(Appcontext);
   const navigate = useNavigate();
@@ -15,6 +20,14 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+
+  function useDemo(account) {
+    chooseRole(account.role);
+    setId(account.id);
+    setPassword(account.password);
+    setError("");
+    document.getElementById("school-id")?.focus();
+  }
 
   async function handleLogin(event) {
     event.preventDefault();
@@ -55,7 +68,17 @@ export default function Login() {
       <p className="login-help">Need help signing in? Contact your school administrator to reset your password.</p>
       <Link to="/" className="text-link">← Back to school website</Link>
     </div></section>
-    <aside className="login-photo"><img src={assets.building} alt="Nimar Academy school building" /><div><BookOpen size={24} /><h2>Nimar Academy</h2><p>Your timetable, attendance and results — all in one place.</p></div></aside>
+    <aside className="login-photo"><img src={assets.building} alt="Nimar Academy school building" /><div><BookOpen size={24} /><h2>Nimar Academy</h2><p>Your timetable, attendance and results — all in one place.</p>
+      <section className="demo-accounts" aria-labelledby="demo-title">
+        <h3 id="demo-title">Try a demo account</h3>
+        <p>Choose an account to fill in the sign-in form.</p>
+        {demoAccounts.map((account) => <article className="demo-account" key={account.role}>
+          <h4>{account.role === "student" ? "Student demo" : "Teacher demo"}</h4>
+          <dl><div><dt>ID</dt><dd>{account.id}</dd></div><div><dt>Password</dt><dd>{account.password}</dd></div></dl>
+          <button type="button" className="button button-secondary" disabled={busy} onClick={() => useDemo(account)}>Use {account.role} demo</button>
+        </article>)}
+      </section>
+    </div></aside>
     </main><footer className="login-footer">Nimar Academy · Student, teacher &amp; administrator access</footer>
   </div>;
 }

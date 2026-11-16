@@ -370,3 +370,22 @@ a { text-decoration: none; }
   .attendance-panel th .attendance-toggle { font-size: .78rem; }
   .attendance-panel .panel-heading { flex-direction: column; align-items: stretch; }
 }
+
+/* Public demo details sit below the school photo, also visible on mobile. */
+.demo-accounts { margin-top: 26px; padding-top: 22px; border-top: 1px solid #cedbdf; }
+.demo-accounts > h3 { font-size: 1.1rem; font-weight: 600; color: #254859; }
+.demo-accounts > p { font-size: .86rem; margin: 6px 0 16px; }
+.demo-account { background: #fff; border: 1px solid #d5e0e4; border-radius: 6px; padding: 16px; margin-top: 12px; }
+.demo-account h4 { font-weight: 600; margin-bottom: 10px; color: #254859; }
+.demo-account dl { margin-bottom: 14px; }
+.demo-account dl > div { display: grid; grid-template-columns: 78px minmax(0, 1fr); gap: 8px; margin-top: 6px; font-size: .87rem; }
+.demo-account dt { color: #647781; }
+.demo-account dd { margin: 0; overflow-wrap: anywhere; color: #263f4b; user-select: all; }
+.demo-account .button { width: 100%; font-size: .85rem; }
+@media (max-width: 899px) {
+  .login-photo { display: flex; }
+  .login-photo > img { display: none; }
+  .login-photo > div { padding: 24px; }
+  .login-photo > div > svg, .login-photo > div > h2, .login-photo > div > p { display: none; }
+  .demo-accounts { margin: 0; padding: 0; border: 0; }
+}
