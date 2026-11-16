@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /student
+Disallow: /teacher
+Disallow: /login
+
+Sitemap: https://smart-school-management-lqx9.vercel.app/sitemap.xml
